@@ -18,6 +18,8 @@ dependencies:
   timer_unit:           { git: "https://github.com/pulp-platform/timer_unit.git",           version: 1.0.3  }
   obi:                  { git: "https://github.com/pulp-platform/obi.git",                  version: 0.1.7  }
   obi_peripherals:      { git: "https://github.com/pulp-platform/obi_peripherals.git",      rev: 21ee04d    } # UART
+  apb_uart:             { git: "https://github.com/pulp-platform/apb_uart.git",             version: 0.2.1  }
+  apb_adv_timer:        { git: "https://github.com/nicoca20/apb_adv_timer.git",             version: 1.0.4  }
   cve2:                 { path: "rtl/cve2" } # a vendor package (no Bender.yml), see below 
 
 
@@ -174,6 +176,13 @@ vendor_package:
       - { from: 'hw/obi_uart/', to: '',            patch_dir: 'hw/' }
       - { from: 'Bender.yml',   to: 'Bender.yml',  patch_dir: '' }
 
+  - name: apb_adv_timer
+    target_dir: rtl/apb_adv_timer
+    upstream: { git: "https://github.com/nicoca20/apb_adv_timer.git", rev: "c8faec1e1755386d0e0f31a55ebd80612a3dcea9"  } # v1.0.4
+    patch_dir: "rtl/patches/apb_adv_timer"
+    mapping:
+      - { from: 'rtl/',        to: '',            patch_dir: 'rtl/' }
+      - { from: 'Bender.yml',  to: 'Bender.yml',  patch_dir: '' }
 
   #########
   # core  #
