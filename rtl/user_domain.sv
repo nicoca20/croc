@@ -4,6 +4,7 @@
 //
 // Authors:
 // - Philippe Sauter <phsauter@iis.ee.ethz.ch>
+// - Nico Canzani <ncanzani@student.ethz.ch>
 
 module user_domain import user_pkg::*; import croc_pkg::*; #(
   parameter int unsigned GpioCount = 16
@@ -47,12 +48,18 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
   sbr_obi_rsp_t [NumDemuxSbr-1:0] all_user_sbr_obi_rsp;
 
   // Error Subordinate Bus
-  sbr_obi_req_t user_error_obi_req;
-  sbr_obi_rsp_t user_error_obi_rsp;
+  // sbr_obi_req_t user_error_obi_req;
+  // sbr_obi_rsp_t user_error_obi_rsp;
+
+  // Advanced Timer Subordinate Bus
+  sbr_obi_req_t adv_timer_obi_req;
+  sbr_obi_rsp_t adv_timer_obi_rsp;
 
   // Fanout into more readable signals
-  assign user_error_obi_req              = all_user_sbr_obi_req[UserError];
-  assign all_user_sbr_obi_rsp[UserError] = user_error_obi_rsp;
+  // assign user_error_obi_req              = all_user_sbr_obi_req[UserError];
+  // assign all_user_sbr_obi_rsp[UserError] = user_error_obi_rsp;
+  assign adv_timer_obi_req           = all_user_sbr_obi_req[UserAdvTimer];
+  assign all_user_sbr_obi_rsp[UserAdvTimer] = adv_timer_obi_rsp;
 
 
   //-----------------------------------------------------------------------------------------------
@@ -101,18 +108,71 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
 //-------------------------------------------------------------------------------------------------
 
   // Error Subordinate
-  obi_err_sbr #(
-    .ObiCfg      ( SbrObiCfg     ),
-    .obi_req_t   ( sbr_obi_req_t ),
-    .obi_rsp_t   ( sbr_obi_rsp_t ),
-    .NumMaxTrans ( 1             ),
-    .RspData     ( 32'hBADCAB1E  )
-  ) i_user_err (
+  // obi_err_sbr #(
+  //   .ObiCfg      ( SbrObiCfg     ),
+  //   .obi_req_t   ( sbr_obi_req_t ),
+  //   .obi_rsp_t   ( sbr_obi_rsp_t ),
+  //   .NumMaxTrans ( 1             ),
+  //   .RspData     ( 32'hBADCAB1E  )
+  // ) i_user_err (
+  //   .clk_i,
+  //   .rst_ni,
+  //   .testmode_i ( testmode_i      ),
+  //   .obi_req_i  ( user_error_obi_req ),
+  //   .obi_rsp_o  ( user_error_obi_rsp )
+  // );
+
+  // adv_timer Subordinate
+  reg_req_t adv_timer_reg_req;
+  reg_rsp_t adv_timer_reg_rsp;
+
+  periph_to_reg #(
+    .AW    ( SbrObiCfg.AddrWidth  ),
+    .DW    ( SbrObiCfg.DataWidth  ),
+    .BW    ( 8                    ),
+    .IW    ( SbrObiCfg.IdWidth    ),
+    .req_t ( reg_req_t            ),
+    .rsp_t ( reg_rsp_t            )
+  ) i_adv_timer_translate (
     .clk_i,
     .rst_ni,
-    .testmode_i ( testmode_i      ),
-    .obi_req_i  ( user_error_obi_req ),
-    .obi_rsp_o  ( user_error_obi_rsp )
+
+    .req_i     ( adv_timer_obi_req.req     ),
+    .add_i     ( adv_timer_obi_req.a.addr  ),
+    .wen_i     ( ~adv_timer_obi_req.a.we   ),
+    .wdata_i   ( adv_timer_obi_req.a.wdata ),
+    .be_i      ( adv_timer_obi_req.a.be    ),
+    .id_i      ( adv_timer_obi_req.a.aid   ),
+
+    .gnt_o     ( adv_timer_obi_rsp.gnt     ),
+    .r_rdata_o ( adv_timer_obi_rsp.r.rdata ),
+    .r_opc_o   ( adv_timer_obi_rsp.r.err   ),
+    .r_id_o    ( adv_timer_obi_rsp.r.rid   ),
+    .r_valid_o ( adv_timer_obi_rsp.rvalid  ),
+
+    .reg_req_o ( adv_timer_reg_req ),
+    .reg_rsp_i ( adv_timer_reg_rsp )
+  );
+
+  reg_adv_timer_wrap #(
+    .AddrWidth        ( 32     ),
+    .reg_req_t        ( reg_req_t ),
+    .reg_rsp_t        ( reg_rsp_t )
+  ) i_adv_timer_wrap (
+    .clk_i            ( clk_i         ),
+    .rst_ni           ( rst_ni        ),
+
+    .reg_req_i        ( adv_timer_reg_req ),
+    .reg_rsp_o        ( adv_timer_reg_rsp ),
+
+    .dft_cg_enable_i  (  ),
+    .low_speed_clk_i  (  ),
+    .ext_sig_i        (  ),
+    .events_o         (  ),
+    .ch_0_o           (  ),
+    .ch_1_o           (  ),
+    .ch_2_o           (  ),
+    .ch_3_o           (  )
   );
 
 endmodule
