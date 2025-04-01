@@ -40,7 +40,8 @@ package user_pkg;
 
   // Address rules given to address decoder
   localparam croc_pkg::addr_map_rule_t [NumDemuxSbrRules-1:0] user_addr_map = '{
-    '{ idx:UserTimer, start_addr: UserTimerAddrOffset, end_addr: UserTimerAddrOffset + UserTimerAddrRange},
+    '{ idx:UserTimer, start_addr: UserTimerAddrOffset, end_addr: UserTimerAddrOffset + UserTimerAddrRange}
   };
+
 
 endpackage
