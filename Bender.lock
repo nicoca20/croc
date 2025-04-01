@@ -6,6 +6,21 @@ packages:
       Path: rtl/apb
     dependencies:
     - common_cells
+  apb_adv_timer:
+    revision: c8faec1e1755386d0e0f31a55ebd80612a3dcea9
+    version: 1.0.4
+    source:
+      Git: https://github.com/nicoca20/apb_adv_timer.git
+    dependencies:
+    - tech_cells_generic
+  apb_uart:
+    revision: null
+    version: null
+    source:
+      Path: rtl/apb_uart
+    dependencies:
+    - apb
+    - register_interface
   common_cells:
     revision: null
     version: null
