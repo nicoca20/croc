@@ -19,7 +19,7 @@ dependencies:
   obi:                  { git: "https://github.com/pulp-platform/obi.git",                  version: 0.1.7  }
   obi_peripherals:      { git: "https://github.com/pulp-platform/obi_peripherals.git",      rev: 21ee04d    } # UART
   apb_uart:             { git: "https://github.com/pulp-platform/apb_uart.git",             version: 0.2.1  }
-  apb_adv_timer:        { git: "https://github.com/nicoca20/apb_adv_timer.git",             version: 1.0.4  }
+  apb_adv_timer:        { git: "https://github.com/nicoca20/apb_adv_timer.git",             rev: feature/implement_timer  }
   cve2:                 { path: "rtl/cve2" } # a vendor package (no Bender.yml), see below 
 
 
