@@ -4,12 +4,14 @@
 //
 // Authors:
 // - Philippe Sauter <phsauter@iis.ee.ethz.ch>
+// - Nico Canzani <ncanzani@student.ethz.ch>
 
 #include "uart.h"
 #include "print.h"
 #include "timer.h"
 #include "gpio.h"
 #include "util.h"
+#include "adv_timer.h"
 
 /// @brief Example integer square root
 /// @return integer square root of n
@@ -65,22 +67,25 @@ int main() {
     asm volatile ("nop; nop; nop; nop; nop;");
     printf("GPIO (expect 0xA0): 0x%x\n", gpio_read());
 
-    gpio_toggle(0x0F); // toggle lower 8 GPIOs
-    asm volatile ("nop; nop; nop; nop; nop;");
-    printf("GPIO (expect 0x50): 0x%x\n", gpio_read());
+    printf("Timer started\n");
+
+    uart_write_flush();
+    uint32_t counter_value = timer0_get_counter();
+    printf("Timer Counter: 0x%x\n", counter_value);
     uart_write_flush();
 
-    // doing some compute
-    uint32_t start = get_mcycle();
-    uint32_t res   = isqrt(1234567890UL);
-    uint32_t end   = get_mcycle();
-    printf("Result: 0x%x, Cycles: 0x%x\n", res, end - start);
-    uart_write_flush();
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     uint32_t counter_value = timer0_get_counter();
+    //     printf("Timer Counter [0x%x]: 0x%x\n", i, counter_value);
+    //     uart_write_flush();
+    // }
 
-    // using the timer
-    printf("Tick\n");
-    sleep_ms(10);
-    printf("Tock\n");
-    uart_write_flush();
+    // Wait for the timer to reach threshold
+    // while (timer0_get_counter() < threshold)
+    //     ;
+
+    // printf("Timer reached threshold!\n");
+    // uart_write_flush();
     return 1;
 }
