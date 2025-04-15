@@ -16,6 +16,9 @@
 #define REG_TIM0_TH 0x008      // Threshold Register
 #define REG_TIM0_COUNTER 0x02C // Current Timer Counter
 
+// divers, currently unsorted
+#define REG_CH_EN ((1 << 8) | (1 << 2))
+
 // -----------------------------------------------------------------------------
 // Timer Command Register (REG_TIM0_CMD) bits
 // -----------------------------------------------------------------------------

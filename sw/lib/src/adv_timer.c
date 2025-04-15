@@ -14,6 +14,9 @@ void timer0_init(uint32_t threshold)
     // Configure the timer (Enable)
     *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CFG) &= ~TIM_CFG_SEL_CLK_SRC;
 
+    // Enable Clock of timer 0
+    *reg32(ADV_TIMER_BASE_ADDR, REG_CH_EN) = (1 << 0);
+
     // Set the threshold value
     *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_TH) = threshold;
 
