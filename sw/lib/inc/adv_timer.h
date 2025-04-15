@@ -10,17 +10,8 @@
 
 #define ADV_TIMER_BASE_ADDR 0x20001000
 
-// Timer 0 Register Offsets
-#define REG_TIM0_CMD 0x000     // Command Register
-#define REG_TIM0_CFG 0x004     // Configuration Register
-#define REG_TIM0_TH 0x008      // Threshold Register
-#define REG_TIM0_COUNTER 0x02C // Current Timer Counter
-
-// divers, currently unsorted
-#define REG_CH_EN ((1 << 8) | (1 << 2))
-
 // -----------------------------------------------------------------------------
-// Timer Command Register (REG_TIM0_CMD) bits
+// Timer Command Register bits
 // -----------------------------------------------------------------------------
 #define TIM_CMD_START (1 << 0)
 #define TIM_CMD_STOP (1 << 1)
@@ -29,58 +20,86 @@
 #define TIM_CMD_ARM (1 << 4)
 
 // -----------------------------------------------------------------------------
-// Timer Configuration Register (REG_TIM0_CFG) bits
+// Timer Configuration Register bits / Masks
 // -----------------------------------------------------------------------------
-#define TIM_CFG_IN_SEL_MASK (0xFF)      // Bits [7:0]: Input Select
-#define TIM_CFG_IN_MODE_MASK (0x7 << 8) // Bits [10:8]: Input Mode
-#define TIM_CFG_SEL_CLK_SRC (1 << 11)   // Bit [11]: Clock Source Select
-#define TIM_CFG_SEL_SAW (1 << 12)       // Bit [12]: Sawtooth Mode
-#define TIM_CFG_PRESC_MASK (0xFF << 16) // Bits [23:16]: Prescaler
+#define TIM_CFG_IN_SEL_MASK (0xFF)
+#define TIM_CFG_IN_MODE_MASK (0x7 << 8)
+#define TIM_CFG_SEL_CLK_SRC (1 << 11)
+#define TIM_CFG_SEL_SAW (1 << 12)
+#define TIM_CFG_PRESC_MASK (0xFF << 16)
 
 // -----------------------------------------------------------------------------
-// Timer Channel 0 Threshold Register (REG_TIM0_CH0_TH) bits
+// Timer 0 Registers
 // -----------------------------------------------------------------------------
-#define TIM_CH0_TH_MASK (0xFFFF)      // Bits [15:0]: Channel 0 Threshold
-#define TIM_CH0_MODE_MASK (0x7 << 16) // Bits [18:16]: Channel 0 Mode
-
-// Timer Channel 0 LUT Register (REG_TIM0_CH0_LUT) bits
-#define TIM_CH0_LUT_MASK (0xFFFF)    // Bits [15:0]: Channel 0 LUT
-#define TIM_CH0_FLT_MASK (0x3 << 16) // Bits [17:16]: Channel 0 Filter
-
-// -----------------------------------------------------------------------------
-// Timer Channel 1 Threshold Register (REG_TIM0_CH1_TH) bits
-// -----------------------------------------------------------------------------
-#define TIM_CH1_TH_MASK (0xFFFF)      // Bits [15:0]: Channel 1 Threshold
-#define TIM_CH1_MODE_MASK (0x7 << 16) // Bits [18:16]: Channel 1 Mode
-
-// Timer Channel 1 LUT Register (REG_TIM0_CH1_LUT) bits
-#define TIM_CH1_LUT_MASK (0xFFFF)    // Bits [15:0]: Channel 1 LUT
-#define TIM_CH1_FLT_MASK (0x3 << 16) // Bits [17:16]: Channel 1 Filter
+#define REG_TIM0_CMD 0x000
+#define REG_TIM0_CFG 0x004
+#define REG_TIM0_TH 0x008
+#define REG_TIM0_CH0_TH 0x00C
+#define REG_TIM0_CH1_TH 0x010
+#define REG_TIM0_CH2_TH 0x014
+#define REG_TIM0_CH3_TH 0x018
+#define REG_TIM0_CH0_LUT 0x01C
+#define REG_TIM0_CH1_LUT 0x020
+#define REG_TIM0_CH2_LUT 0x024
+#define REG_TIM0_CH3_LUT 0x028
+#define REG_TIM0_COUNTER 0x02C
 
 // -----------------------------------------------------------------------------
-// Timer Channel 2 Threshold Register (REG_TIM0_CH2_TH) bits
+// Timer 1 Registers
 // -----------------------------------------------------------------------------
-#define TIM_CH2_TH_MASK (0xFFFF)      // Bits [15:0]: Channel 2 Threshold
-#define TIM_CH2_MODE_MASK (0x7 << 16) // Bits [18:16]: Channel 2 Mode
-
-// Timer Channel 2 LUT Register (REG_TIM0_CH2_LUT) bits
-#define TIM_CH2_LUT_MASK (0xFFFF)    // Bits [15:0]: Channel 2 LUT
-#define TIM_CH2_FLT_MASK (0x3 << 16) // Bits [17:16]: Channel 2 Filter
-
-// -----------------------------------------------------------------------------
-// Timer Channel 3 Threshold Register (REG_TIM0_CH3_TH) bits
-// -----------------------------------------------------------------------------
-#define TIM_CH3_TH_MASK (0xFFFF)      // Bits [15:0]: Channel 3 Threshold
-#define TIM_CH3_MODE_MASK (0x7 << 16) // Bits [18:16]: Channel 3 Mode
-
-// Timer Channel 3 LUT Register (REG_TIM0_CH3_LUT) bits
-#define TIM_CH3_LUT_MASK (0xFFFF)    // Bits [15:0]: Channel 3 LUT
-#define TIM_CH3_FLT_MASK (0x3 << 16) // Bits [17:16]: Channel 3 Filter
+#define REG_TIM1_CMD 0x040
+#define REG_TIM1_CFG 0x044
+#define REG_TIM1_TH 0x048
+#define REG_TIM1_CH0_TH 0x04C
+#define REG_TIM1_CH1_TH 0x050
+#define REG_TIM1_CH2_TH 0x054
+#define REG_TIM1_CH3_TH 0x058
+#define REG_TIM1_CH0_LUT 0x05C
+#define REG_TIM1_CH1_LUT 0x060
+#define REG_TIM1_CH2_LUT 0x064
+#define REG_TIM1_CH3_LUT 0x068
+#define REG_TIM1_COUNTER 0x06C
 
 // -----------------------------------------------------------------------------
-// Other Registers (no bitfield macros needed)
+// Timer 2 Registers
 // -----------------------------------------------------------------------------
-#define TIM_TH_MASK (0xFFFFFFFF) // Full 32 bits for Threshold (TH)
+#define REG_TIM2_CMD 0x080
+#define REG_TIM2_CFG 0x084
+#define REG_TIM2_TH 0x088
+#define REG_TIM2_CH0_TH 0x08C
+#define REG_TIM2_CH1_TH 0x090
+#define REG_TIM2_CH2_TH 0x094
+#define REG_TIM2_CH3_TH 0x098
+#define REG_TIM2_CH0_LUT 0x09C
+#define REG_TIM2_CH1_LUT 0x0A0
+#define REG_TIM2_CH2_LUT 0x0A4
+#define REG_TIM2_CH3_LUT 0x0A8
+#define REG_TIM2_COUNTER 0x0AC
+
+// -----------------------------------------------------------------------------
+// Timer 3 Registers
+// -----------------------------------------------------------------------------
+#define REG_TIM3_CMD 0x0C0
+#define REG_TIM3_CFG 0x0C4
+#define REG_TIM3_TH 0x0C8
+#define REG_TIM3_CH0_TH 0x0CC
+#define REG_TIM3_CH1_TH 0x0D0
+#define REG_TIM3_CH2_TH 0x0D4
+#define REG_TIM3_CH3_TH 0x0D8
+#define REG_TIM3_CH0_LUT 0x0DC
+#define REG_TIM3_CH1_LUT 0x0E0
+#define REG_TIM3_CH2_LUT 0x0E4
+#define REG_TIM3_CH3_LUT 0x0E8
+#define REG_TIM3_COUNTER 0x0EC
+
+// others
+#define REG_EVENT_CFG 0x100
+#define REG_CH_EN 0x104
+
+#define REG_TIM0_EN (1 << 0)
+#define REG_TIM1_EN (1 << 1)
+#define REG_TIM2_EN (1 << 2)
+#define REG_TIM3_EN (1 << 3)
 
 void timer0_init(int topvalue);
 

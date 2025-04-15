@@ -43,29 +43,12 @@ int main() {
     // wait until uart has finished sending
     uart_write_flush();
 
-    // uart loopback
-    uart_loopback_enable();
-    printf("internal msg\n");
-    sleep_ms(1);
-    for(uint8_t idx = 0; idx<15; idx++) {
-        receive_buff[idx] = uart_read();
-        if(receive_buff[idx] == '\n') {
-            break;
-        }
-    }
-    uart_loopback_disable();
-
-    printf("Loopback received: ");
-    printf(receive_buff);
-    uart_write_flush();
-
-    // toggling some GPIOs
-    gpio_set_direction(0xFFFF, 0x000F); // lowest four as outputs
-    gpio_write(0x0A);  // ready output pattern
-    gpio_enable(0xFF); // enable lowest eight
-    // wait a few cycles to give GPIO signal time to propagate
-    asm volatile ("nop; nop; nop; nop; nop;");
-    printf("GPIO (expect 0xA0): 0x%x\n", gpio_read());
+    int topvalue = 0x10;
+    int topvalue_read = timer0_get_top_value(); // Causes first APB communication
+    printf("Timer Top Value before init: 0x%x\n", topvalue_read);
+    timer0_init(topvalue);
+    topvalue_read = timer0_get_top_value();
+    printf("Timer Top Value after init: 0x%x (expexted 0x%x)\n", topvalue_read, topvalue);
 
     printf("Timer started\n");
     uart_write_flush();

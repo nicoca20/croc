@@ -15,18 +15,13 @@ void timer0_init(int topvalue)
     *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CFG) |= TIM_CFG_SEL_CLK_SRC;
 
     // Enable Clock of timer 0
-    *reg32(ADV_TIMER_BASE_ADDR, REG_CH_EN) = (1 << 0);
+    *reg32(ADV_TIMER_BASE_ADDR, REG_CH_EN) |= REG_TIM0_EN;
 
-    // Set the threshold value
+    // Set the bottom and top value of the counter
     timer0_set_bottom_top_value(0, topvalue);
 
     // Start the timer
     *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD) |= TIM_CMD_START;
-
-    // Set the mode
-    // int cfg = *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CFG);
-    // cfg &= ~((1 << 8))
-    // *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD) |= TIM_CMD_START;
 }
 
 int timer0_get_counter()
