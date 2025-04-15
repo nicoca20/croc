@@ -82,8 +82,12 @@
 // -----------------------------------------------------------------------------
 #define TIM_TH_MASK (0xFFFFFFFF) // Full 32 bits for Threshold (TH)
 
-void timer0_init(uint32_t threshold);
-uint32_t timer0_get_counter();
-uint32_t timer0_get_threshold();
+void timer0_init(int topvalue);
+
+int timer0_get_counter();
+
+int timer0_get_top_value();
+int timer0_get_bottom_value();
+void timer0_set_bottom_top_value(int bottomvalue, int topvalue);
 
 #endif // __TIMER_REGS_H__

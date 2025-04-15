@@ -68,24 +68,15 @@ int main() {
     printf("GPIO (expect 0xA0): 0x%x\n", gpio_read());
 
     printf("Timer started\n");
-
-    uart_write_flush();
-    uint32_t counter_value = timer0_get_counter();
-    printf("Timer Counter: 0x%x\n", counter_value);
     uart_write_flush();
 
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     uint32_t counter_value = timer0_get_counter();
-    //     printf("Timer Counter [0x%x]: 0x%x\n", i, counter_value);
-    //     uart_write_flush();
-    // }
+    // Wait for the timer to reach some threshold
+    int wait_until_counter = 0x200;
+    while (timer0_get_counter() < wait_until_counter && wait_until_counter < topvalue)
+        ;
 
-    // Wait for the timer to reach threshold
-    // while (timer0_get_counter() < threshold)
-    //     ;
+    printf("Timer reached threshold of 0x%x!\n", wait_until_counter);
+    uart_write_flush();
 
-    // printf("Timer reached threshold!\n");
-    // uart_write_flush();
     return 1;
 }

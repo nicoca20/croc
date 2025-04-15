@@ -3,7 +3,7 @@
 #include "config.h"
 #include "adv_timer.h"
 
-void timer0_init(uint32_t threshold)
+void timer0_init(int topvalue)
 {
     // Reset the timer before configuring
     *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD) = TIM_CMD_RST;
@@ -12,24 +12,40 @@ void timer0_init(uint32_t threshold)
     *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD) |= TIM_CMD_STOP;
 
     // Configure the timer (Enable)
-    *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CFG) &= ~TIM_CFG_SEL_CLK_SRC;
+    *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CFG) |= TIM_CFG_SEL_CLK_SRC;
 
     // Enable Clock of timer 0
     *reg32(ADV_TIMER_BASE_ADDR, REG_CH_EN) = (1 << 0);
 
     // Set the threshold value
-    *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_TH) = threshold;
+    timer0_set_bottom_top_value(0, topvalue);
 
     // Start the timer
     *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD) |= TIM_CMD_START;
+
+    // Set the mode
+    // int cfg = *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CFG);
+    // cfg &= ~((1 << 8))
+    // *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD) |= TIM_CMD_START;
 }
 
-uint32_t timer0_get_counter()
+int timer0_get_counter()
 {
     return *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_COUNTER);
 }
 
-uint32_t timer0_get_threshold()
+int timer0_get_top_value()
 {
-    return *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_TH);
+    return (*reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_TH) >> 16);
+}
+
+int timer0_get_bottom_value()
+{
+    return *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_TH) & 0xFFFF;
+}
+
+void timer0_set_bottom_top_value(int bottomvalue, int topvalue)
+{
+    int regvalue = ((topvalue & 0xFFFF) << 16) | (bottomvalue & 0xFFFF);
+    *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_TH) = regvalue;
 }
