@@ -166,7 +166,7 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
     .reg_rsp_o        ( adv_timer_reg_rsp ),
 
     .dft_cg_enable_i  (  ),
-    .low_speed_clk_i  ( clk_i ),
+    .low_speed_clk_i  ( ref_clk_i ),
     .ext_sig_i        (  ),
     .events_o         (  ),
     .ch_0_o           (  ),
