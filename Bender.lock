@@ -7,8 +7,8 @@ packages:
     dependencies:
     - common_cells
   apb_adv_timer:
-    revision: c8faec1e1755386d0e0f31a55ebd80612a3dcea9
-    version: 1.0.4
+    revision: null
+    version: null
     source:
       Git: https://github.com/nicoca20/apb_adv_timer.git
     dependencies:
