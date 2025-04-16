@@ -8,19 +8,17 @@ void timer0_init(int topvalue)
     // Reset the timer before configuring
     *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD) = TIM_CMD_RST;
 
-    // Stop the timer before configuring
-    *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD) |= TIM_CMD_STOP;
-
-    // Configure the timer (Enable)
+    // Select Clock: set TIM_CFG_SEL_CLK_SRC and mode = 0 to use low speed clock
     *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CFG) |= TIM_CFG_SEL_CLK_SRC;
 
     // Enable Clock of timer 0
     *reg32(ADV_TIMER_BASE_ADDR, REG_CH_EN) |= REG_TIM0_EN;
 
     // Set the bottom and top value of the counter
+    // From where to where should be counted (both values are included).
     timer0_set_bottom_top_value(0, topvalue);
 
-    // Start the timer
+    // Start timer 0
     *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD) |= TIM_CMD_START;
 }
 
