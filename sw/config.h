@@ -4,21 +4,24 @@
 //
 // Nils Wistoff <nwistoff@iis.ee.ethz.ch>
 // Paul Scheffler <paulsc@iis.ee.ethz.ch>
+// Nico Canzani <ncanzani@student.ethz.ch>
 
 #pragma once
 
 // Address map
 #define SOCCTRL_BASE_ADDR 0x03000000
-#define UART_BASE_ADDR    0x03002000
-#define GPIO_BASE_ADDR    0x03005000
-#define TIMER_BASE_ADDR   0x0300A000
+#define UART_BASE_ADDR 0x03002000
+#define GPIO_BASE_ADDR 0x03005000
+#define TIMER_BASE_ADDR 0x0300A000
+
+#define ADV_TIMER_BASE_ADDR 0x20001000
 
 // Frequencies
 #define TB_FREQUENCY 20000000
-#define TB_BAUDRATE    115200
+#define TB_BAUDRATE 115200
 
 // Peripheral configs
 // UART
 #define UART_BYTE_ALIGN 4
-#define UART_FREQ       TB_FREQUENCY
-#define UART_BAUD       TB_BAUDRATE
+#define UART_FREQ TB_FREQUENCY
+#define UART_BAUD TB_BAUDRATE
