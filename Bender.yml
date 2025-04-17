@@ -178,7 +178,7 @@ vendor_package:
 
   - name: apb_adv_timer
     target_dir: rtl/apb_adv_timer
-    upstream: { git: "https://github.com/nicoca20/apb_adv_timer.git", rev: "eaab8dd04ccf314d4d0e5d22a7f9bf8fc069756f"  } # working state, change to a tag at some point
+    upstream: { git: "https://github.com/nicoca20/apb_adv_timer.git", rev: "a71ae61e6f55cbe49a2246b7c7b3317c700711b0"  } # working state, change to a tag at some point
     patch_dir: "rtl/patches/apb_adv_timer"
     mapping:
       - { from: 'rtl/',        to: '',            patch_dir: 'rtl/' }
