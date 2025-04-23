@@ -50,6 +50,9 @@ sources:
       # add your design files with modules here
       # Level 3
       - rtl/croc_soc.sv
+      - rtl/user_domain/user_pulser_wrapper.sv
+      - rtl/user_domain/user_pulser.sv
+      - rtl/user_domain/user_simple_counter.sv
 
   - target: not(fpga)
     files:
