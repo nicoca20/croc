@@ -43,23 +43,21 @@ int main() {
     // wait until uart has finished sending
     uart_write_flush();
 
-    int topvalue = 0x10;
-    int topvalue_read = timer0_get_top_value(); // Causes first APB communication
-    printf("Timer Top Value before init: 0x%x\n", topvalue_read);
-    timer0_init(topvalue);
-    topvalue_read = timer0_get_top_value();
-    printf("Timer Top Value after init: 0x%x (expexted 0x%x)\n", topvalue_read, topvalue);
+    int nCycles = 10;
+    timer0_pwm_init(nCycles, 30);
 
-    printf("Timer started\n");
+    printf("PWM started\n");
     uart_write_flush();
 
-    // Wait for the timer to reach some threshold
-    int wait_until_counter = 0x200;
-    while (timer0_get_counter() < wait_until_counter && wait_until_counter < topvalue)
-        ;
-
-    printf("Timer reached threshold of 0x%x!\n", wait_until_counter);
+    // Print some things to let it run for some time
+    printf("Value of counter: 0x%x\n", timer0_get_counter());
     uart_write_flush();
+    // printf("Value of counter: 0x%x\n", timer0_get_counter());
+    // uart_write_flush();
+    // printf("Value of counter: 0x%x\n", timer0_get_counter());
+    // uart_write_flush();
+    // printf("Value of counter: 0x%x\n", timer0_get_counter());
+    // uart_write_flush();
 
     return 1;
 }

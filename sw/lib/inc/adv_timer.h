@@ -101,6 +101,8 @@
 
 void timer0_init(int topvalue);
 
+void timer0_pwm_init(int nCycles, int dutycycle_value);
+
 int timer0_get_counter();
 
 int timer0_get_top_value();
