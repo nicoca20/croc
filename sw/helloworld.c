@@ -12,6 +12,7 @@
 #include "gpio.h"
 #include "util.h"
 #include "adv_timer.h"
+#include "user_pulser.h"
 
 /// @brief Example integer square root
 /// @return integer square root of n
@@ -43,21 +44,25 @@ int main() {
     // wait until uart has finished sending
     uart_write_flush();
 
-    int nCycles = 10;
-    timer0_pwm_init(nCycles, 30);
+    pulser_set_values();
 
-    printf("PWM started\n");
-    uart_write_flush();
+    // printf("Start pulse sequence\n");
+    // uart_write_flush();
 
-    // Print some things to let it run for some time
-    printf("Value of counter: 0x%x\n", timer0_get_counter());
+    pulser_start();
+    pulser_stop();
+    for (int i = 0; i < 10; i++)
+    {
+        __asm__ volatile("nop");
+    }
+    pulser_start();
+    // while (!pulser_read_done_status())
+    // {
+    //     // Busy-wait until the pulser has finished its task
+    // }
+
+    printf("Done with pulse sequence\n");
     uart_write_flush();
-    // printf("Value of counter: 0x%x\n", timer0_get_counter());
-    // uart_write_flush();
-    // printf("Value of counter: 0x%x\n", timer0_get_counter());
-    // uart_write_flush();
-    // printf("Value of counter: 0x%x\n", timer0_get_counter());
-    // uart_write_flush();
 
     return 1;
 }
