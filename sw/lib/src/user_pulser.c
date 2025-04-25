@@ -1,15 +1,21 @@
+// Copyright (c) 2024 ETH Zurich and University of Bologna.
+// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-License-Identifier: Apache-2.0/
+//
+// Author:
+// - Nico Canzani <ncanzani@student.ethz.ch>
 
 #include "util.h"
 #include "config.h"
 #include "user_pulser.h"
 
 // Function to initialize the pulser (can be expanded for actual hardware initialization)
-void pulser_set_values(void)
+void pulser_set_values(Pulser_Settings_t *settings)
 {
     // *reg32(USER_PULSER_BASE_ADDR, PULSER_F1_REG_OFFSET) = 1;
-    pulser_set_f1_end_high(4, 1);
-    pulser_set_f2_end_high(4, 2);
-    pulser_set_f1_f2_stop_count(3, 0, 2);
+    pulser_set_f1_end_high(settings->f1_end, settings->f1_high);
+    pulser_set_f2_end_high(settings->f2_end, settings->f2_high);
+    pulser_set_f1_f2_stop_count(settings->f1_count, settings->f2_count, settings->stop_count);
 }
 
 // Function to start the pulser (set the start bit)

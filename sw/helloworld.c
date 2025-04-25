@@ -44,10 +44,16 @@ int main() {
     // wait until uart has finished sending
     uart_write_flush();
 
-    pulser_set_values();
+    Pulser_Settings_t firstPulserSettings = {
+        .f1_end = 4,
+        .f1_high = 1,
+        .f2_end = 4,
+        .f2_high = 2,
+        .f1_count = 3,
+        .f2_count = 0,
+        .stop_count = 2};
 
-    // printf("Start pulse sequence\n");
-    // uart_write_flush();
+    pulser_set_values(&firstPulserSettings);
 
     pulser_start();
     pulser_stop();

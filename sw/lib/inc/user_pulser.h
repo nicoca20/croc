@@ -8,6 +8,18 @@
 #ifndef __PULSER_REGS_H__
 #define __PULSER_REGS_H__
 
+// Settings struct to store values to configure the pulser
+typedef struct
+{
+    int f1_end;
+    int f1_high;
+    int f2_end;
+    int f2_high;
+    int f1_count;
+    int f2_count;
+    int stop_count;
+} Pulser_Settings_t;
+
 // Register offsets (based on the `addr_q` in Verilog)
 #define PULSER_START_REG_OFFSET 0x00
 #define PULSER_F1_REG_OFFSET 0x04
@@ -27,7 +39,7 @@
 #define PULSER_DONE_STATUS_BIT 31
 
 // Function prototypes
-void pulser_set_values(void);
+void pulser_set_values(Pulser_Settings_t *settings);
 void pulser_start(void);
 void pulser_stop(void);
 void pulser_set_f1_end_high(int endvalue, int highvalue);
