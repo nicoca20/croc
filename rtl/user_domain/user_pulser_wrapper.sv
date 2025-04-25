@@ -1,161 +1,150 @@
-// gives us the `FF(...) macro making it easy to have properly defined flip-flops
 `include "common_cells/registers.svh"
 
 module user_pulser_wrapper #(
-  /// The OBI configuration for all ports.
-  parameter obi_pkg::obi_cfg_t           ObiCfg      = obi_pkg::ObiDefaultConfig,
-  /// The request struct.
-  parameter type                         obi_req_t   = logic,
-  /// The response struct.
-  parameter type                         obi_rsp_t   = logic
-
+  parameter obi_pkg::obi_cfg_t ObiCfg    = obi_pkg::ObiDefaultConfig,
+  parameter type               obi_req_t = logic,
+  parameter type               obi_rsp_t = logic
 ) (
-  /// Clock
   input  logic clk_i,
-  /// Active-low reset
   input  logic rst_ni,
 
-  /// OBI request interface
   input  obi_req_t obi_req_i,
-  /// OBI response interface
   output obi_rsp_t obi_rsp_o
 );
 
-  // Internal registers for handling OBI requests
+  // Internal OBI handshake registers
   logic req_d, req_q;
   logic we_d, we_q;
-  logic rvalid_d, rvalid_q;
   logic [ObiCfg.AddrWidth-1:0] addr_d, addr_q;
   logic [ObiCfg.IdWidth-1:0] id_d, id_q;
   logic [ObiCfg.DataWidth-1:0] wdata_d, wdata_q;
 
-  // Signals used to create the response
   logic [ObiCfg.DataWidth-1:0] resp_data;
-  logic rsp_err; // Error field of the OBI response
+  logic rsp_err;
 
-  // Internal signal registers for pulser control
-  logic [15:0]  f1_end_reg, f1_high_reg;
-  logic [15:0]  f2_end_reg, f2_high_reg;
-  logic [7:0]   f1_count_reg, f2_count_reg, stop_count_reg;
-
-  // State from pulser
-  logic [2:0]  pulser_state;
-  logic        pulse_out;
-  logic        ready_status;
-
-  // Control FSM pulse generation for "start"
-  logic prev_start;
-  logic start_pulse, stop_pulse;
-
-  // Internal signals
+  // Address decode
   logic [7:0] addr_obi;
+  logic [1:0] pulser_sel;
+  logic [4:0] reg_addr;
 
-  // Note to avoid writing trivial always_ff statements we can use this macro defined in registers.svh
+  // Signals per pulser (arrays of 4)
+  logic [3:0][15:0] f1_end, f1_high, f2_end, f2_high;
+  logic [3:0][7:0]  f1_count, f2_count, stop_count;
+  logic [3:0][2:0]  state;
+  logic [3:0]       ready;
+  logic [3:0]       pulse_out;
+
+  // Pulse control (single wires)
+  logic [3:0]       start_pulse, stop_pulse;
+
+  // Register updates
   `FF(req_q, req_d, '0);
   `FF(id_q , id_d , '0);
   `FF(we_q , we_d , '0);
   `FF(wdata_q , wdata_d , '0);
   `FF(addr_q , addr_d , '0);
-  
-  // Wire request
-  assign req_d = obi_req_i.req;
-  assign id_d = obi_req_i.a.aid;
-  assign we_d = obi_req_i.a.we;
-  assign addr_d = obi_req_i.a.addr;
-  assign wdata_d = obi_req_i.a.wdata;
-  
-  // Wire  response
-  // A channel
-  assign obi_rsp_o.gnt = obi_req_i.req;
-  // R channel:
-  assign obi_rsp_o.rvalid = req_q;
-  assign obi_rsp_o.r.rdata = resp_data;
-  assign obi_rsp_o.r.rid = id_q;
-  assign obi_rsp_o.r.err = rsp_err;
+
+  assign req_d    = obi_req_i.req;
+  assign id_d     = obi_req_i.a.aid;
+  assign we_d     = obi_req_i.a.we;
+  assign addr_d   = obi_req_i.a.addr;
+  assign wdata_d  = obi_req_i.a.wdata;
+
+  assign obi_rsp_o.gnt         = obi_req_i.req;
+  assign obi_rsp_o.rvalid      = req_q;
+  assign obi_rsp_o.r.rdata     = resp_data;
+  assign obi_rsp_o.r.rid       = id_q;
+  assign obi_rsp_o.r.err       = rsp_err;
   assign obi_rsp_o.r.r_optional = '0;
 
-  assign addr_obi = addr_q[7:0];
+  assign addr_obi    = addr_q[7:0];
+  assign pulser_sel  = addr_obi[6:5];  // which pulser (0–3)
+  assign reg_addr    = addr_obi[4:0];  // offset within pulser
 
-  // Start and stop should be triggered once and not stored in a reg
+  // start/stop pulse generation — no register, just edge trigger
+  // Important: all pulser can be started and stopped with one write at 0x00
   always_comb begin
-    start_pulse = 0;
-    stop_pulse = 0;
-    if (req_q && we_q && addr_obi ==8'h00) begin
-      start_pulse = wdata_q[0];
-      stop_pulse = wdata_q[1];
+    start_pulse = 4'b0;
+    stop_pulse  = 4'b0;
+    if (req_q && we_q && addr_obi == 5'h00) begin
+      start_pulse = wdata_q[3:0];
+      stop_pulse  = wdata_q[7:4];
     end
   end
 
-  // OBI write interface
+  // Register file writes
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      f1_end_reg      <= 16'd0;
-      f1_high_reg     <= 16'd0;
-      f2_end_reg      <= 16'd0;
-      f2_high_reg     <= 16'd0;
-      f1_count_reg    <= 8'd0;
-      f2_count_reg    <= 8'd0;
-      stop_count_reg  <= 8'd0;
+      f1_end      <= 16'd0;
+      f1_high     <= 16'd0;
+      f2_end      <= 16'd0;
+      f2_high     <= 16'd0;
+      f1_count    <= 8'd0;
+      f2_count    <= 8'd0;
+      stop_count  <= 8'd0;
     end else if (req_q && we_q) begin
-      case (addr_obi)
-        8'h00: begin
-          // start_pulse     <= wdata_q[0];
-          // stop_pulse      <= wdata_q[1];
-          // Not saved in register but only a pulse. See always_comb above.
+      case (reg_addr)
+        5'h00: begin
+          // Not saved in register but as a pulse. See always_comb above.
         end
-        8'h04: begin
-          f1_high_reg     <= wdata_q[15:0];
-          f1_end_reg      <= wdata_q[31:16];
+        5'h04: begin
+          f1_high[pulser_sel] <= wdata_q[15:0];
+          f1_end[pulser_sel]  <= wdata_q[31:16];
         end
-        8'h08: begin
-          f2_high_reg     <= wdata_q[15:0];
-          f2_end_reg      <= wdata_q[31:16];
+        5'h08: begin
+          f2_high[pulser_sel] <= wdata_q[15:0];
+          f2_end[pulser_sel]  <= wdata_q[31:16];
         end
-        8'h0C: begin
-          f1_count_reg    <= wdata_q[7:0];
-          f2_count_reg    <= wdata_q[15:8];
-          stop_count_reg  <= wdata_q[23:16];
+        5'h0C: begin
+          f1_count[pulser_sel]   <= wdata_q[7:0];
+          f2_count[pulser_sel]   <= wdata_q[15:8];
+          stop_count[pulser_sel] <= wdata_q[23:16];
         end
-        default: begin
-          // No valid register selected — optional: add error flag or log
-          // For now, do nothing to avoid unintended writes
-        end
+        default: ;
       endcase
     end
   end
 
-  // Instantiate pulser with local signals
-  user_pulser i_pulser (
-    .clk_i      (clk_i),
-    .rst_ni     (rst_ni),
-    .start      (start_pulse),
-    .stop       (stop_pulse),
-    .f1_count   (f1_count_reg),
-    .f2_count   (f2_count_reg),
-    .stop_count (stop_count_reg),
-    .f1_end     (f1_end_reg),
-    .f1_high    (f1_high_reg),
-    .f2_end     (f2_end_reg),
-    .f2_high    (f2_high_reg),
-    .pulse_out  (pulse_out),
-    .state_out  (pulser_state)
-  );
+  // Instantiate 4 pulsers
+  generate
+    for (genvar i = 0; i < 4; i++) begin : gen_pulsers
+      user_pulser i_pulser (
+        .clk_i      (clk_i),
+        .rst_ni     (rst_ni),
+        .start      (start_pulse[i]),
+        .stop       (stop_pulse[i]),
+        .f1_count   (f1_count[i]),
+        .f2_count   (f2_count[i]),
+        .stop_count (stop_count[i]),
+        .f1_end     (f1_end[i]),
+        .f1_high    (f1_high[i]),
+        .f2_end     (f2_end[i]),
+        .f2_high    (f2_high[i]),
+        .pulse_out  (pulse_out[i]),
+        .state_out  (state[i])
+      );
+    end
+  endgenerate
 
-  // Define done state (must match enum in pulser)
+  // ready = IDLE or DONE
   localparam IDLE_STATE = 3'd0;
   localparam DONE_STATE = 3'd4;
-  assign ready_status = (pulser_state == IDLE_STATE) || (pulser_state == DONE_STATE);
-
-  // OBI read interface
   always_comb begin
-    resp_data  = 32'd0;
+    for (int i = 0; i < 4; i++) begin
+      ready[i] = (state[i] == IDLE_STATE) || (state[i] == DONE_STATE);
+    end
+  end
+
+  // Read interface
+  always_comb begin
+    resp_data = 32'd0;
     if (req_q && !we_q) begin
-      case (addr_obi)
-        8'h00: resp_data = 32'd0;
-        8'h04: resp_data = {f1_end_reg, f1_high_reg};
-        8'h08: resp_data = {f2_end_reg, f2_high_reg};
-        8'h0C: resp_data = {8'd0, stop_count_reg, f2_count_reg, f1_count_reg};
-        8'h10: resp_data = {28'd0, pulser_state, ready_status};
+      case (reg_addr)
+        5'h00: resp_data = 32'd0;
+        5'h04: resp_data = {f1_end[pulser_sel], f1_high[pulser_sel]};
+        5'h08: resp_data = {f2_end[pulser_sel], f2_high[pulser_sel]};
+        5'h0C: resp_data = {8'd0, stop_count[pulser_sel], f2_count[pulser_sel], f1_count[pulser_sel]};
+        5'h10: resp_data = {28'd0, state[pulser_sel], ready[pulser_sel]};
         default: resp_data = 32'hDEADBEEF;
       endcase
     end
