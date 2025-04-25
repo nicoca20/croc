@@ -50,7 +50,7 @@ void pulser_set_f2_end_switch(int endvalue, int switchvalue)
 void pulser_set_f1_f2_stop_count(int n_f1, int n_f2, int n_stop)
 {
     int val = ((n_f1 << PULSER_N_F1_REG_OFFSET) & PULSER_COUNT_F1_MASK) |
-              ((n_f2 << PULSER_N_F2_REG_OFFSET) & PULSER_COUNT_F1_MASK) |
+              ((n_f2 << PULSER_N_F2_REG_OFFSET) & PULSER_COUNT_F2_MASK) |
               ((n_stop << PULSER_N_STOP_REG_OFFSET) & PULSER_COUNT_STOP_MASK);
 
     pulser_write(PULSER0_COUNT_REG, val);
