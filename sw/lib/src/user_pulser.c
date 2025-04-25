@@ -10,12 +10,12 @@
 #include "user_pulser.h"
 
 // Function to initialize the pulser (can be expanded for actual hardware initialization)
-void pulser_set_values()
+void pulser_set_values(const pulser_settings_t *settings)
 {
     // *reg32(USER_PULSER_BASE_ADDR, PULSER_F1_REG_OFFSET) = 1;
-    pulser_set_f1_end_switch(4, 2);
-    pulser_set_f2_end_switch(6, 5);
-    pulser_set_f1_f2_stop_count(3, 1, 2);
+    pulser_set_f1_end_switch(settings->f1_end, settings->f1_high);
+    pulser_set_f2_end_switch(settings->f2_end, settings->f2_high);
+    pulser_set_f1_f2_stop_count(settings->f1_count, settings->f2_count, settings->stop_count);
 }
 
 // Function to start the pulser (set the start bit)

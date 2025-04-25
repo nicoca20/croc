@@ -8,6 +8,18 @@
 #ifndef __PULSER_REGS_H__
 #define __PULSER_REGS_H__
 
+// Settings struct to store values to configure the pulser
+typedef struct
+{
+    int f1_end;
+    int f1_high;
+    int f2_end;
+    int f2_high;
+    int f1_count;
+    int f2_count;
+    int stop_count;
+} pulser_settings_t;
+
 // Finite state Machine states of pulser
 typedef enum
 {
@@ -51,7 +63,7 @@ typedef enum
 #define PULSER_N_STOP_REG_OFFSET 16
 
 // Function prototypes
-void pulser_set_values();
+void pulser_set_values(const pulser_settings_t *settings);
 void pulser_start(void);
 void pulser_stop(void);
 void pulser_set_f1_end_switch(int endvalue, int switchvalue);

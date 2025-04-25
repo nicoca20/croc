@@ -14,36 +14,25 @@
 #include "adv_timer.h"
 #include "user_pulser.h"
 
-/// @brief Example integer square root
-/// @return integer square root of n
-uint32_t isqrt(uint32_t n) {
-    uint32_t res = 0;
-    uint32_t bit = (uint32_t)1 << 30;
+int main()
+{
+    // Pulser_Settings_t pulserSettings;
+    pulser_settings_t pulser0_settings;
+    pulser0_settings.f1_end = 4;
+    pulser0_settings.f1_high = 1;
+    pulser0_settings.f2_end = 4;
+    pulser0_settings.f2_high = 2;
+    pulser0_settings.f1_count = 3;
+    pulser0_settings.f2_count = 2;
+    pulser0_settings.stop_count = 2;
 
-    while (bit > n) bit >>= 2;
-
-    while (bit) {
-        if (n >= res + bit) {
-            n -= res + bit;
-            res = (res >> 1) + bit;
-        } else {
-            res >>= 1;
-        }
-        bit >>= 2;
-    }
-    return res;
-}
-
-char receive_buff[16] = {0};
-
-int main() {
     uart_init(); // setup the uart peripheral
 
     // simple printf support (only prints text and hex numbers)
     printf("Hello World!\n");
     uart_write_flush();
 
-    pulser_set_values();
+    pulser_set_values(&pulser0_settings);
 
     pulser_start();
     pulser_stop();
