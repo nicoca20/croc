@@ -53,7 +53,24 @@ int main() {
     }
     pulser_start();
 
-    printf("Done with pulse sequence\n");
+    // Check pulser reading functions
+    printf("Pulser state fsm: 0x%x\n", get_pulser_fsm_state());
+    uart_write_flush();
+    printf("Reading f1 end: 0x%x\n", pulser_read_f1_end());
+    uart_write_flush();
+    printf("Reading f1 switch: 0x%x\n", pulser_read_f1_switch());
+    uart_write_flush();
+    printf("Reading f2 end: 0x%x\n", pulser_read_f2_end());
+    uart_write_flush();
+    printf("Reading f2 switch: 0x%x\n", pulser_read_f2_switch());
+    uart_write_flush();
+    printf("Reading count: 0x%x\n", pulser_read_count());
+    uart_write_flush();
+    printf("Reading status: 0x%x\n", pulser_read_status());
+    uart_write_flush();
+    printf("Pulser ready: 0x%x\n", pulser_ready());
+    uart_write_flush();
+    printf("Pulser state fsm: 0x%x\n", get_pulser_fsm_state());
     uart_write_flush();
 
     return 1;

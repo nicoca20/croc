@@ -8,6 +8,16 @@
 #ifndef __PULSER_REGS_H__
 #define __PULSER_REGS_H__
 
+// Finite state Machine states of pulser
+typedef enum
+{
+    IDLE = 0,
+    RUN_F1 = 1,
+    RUN_F2 = 2,
+    RUN_STOP = 3,
+    DONE = 4
+} state_pulser_t;
+
 // Register offsets (based on the `addr_q` in Verilog)
 #define PULSER0_CFG_REG 0x00
 #define PULSER0_F1_REG 0x04
@@ -19,6 +29,7 @@
 #define PULSER_START_BIT (1 << 0)
 #define PULSER_STOP_BIT (1 << 1)
 #define PULSER_READY_STATUS_BIT (1 << 0)
+#define PULSER_STATE_MASK (0x7 << 1)
 
 #define PULSER_F1_SWITCH_MASK 0x0000FFFF
 #define PULSER_F1_END_MASK 0xFFFF0000
@@ -52,10 +63,12 @@ int pulser_read_f1_switch(void);
 int pulser_read_f2_end(void);
 int pulser_read_f2_switch(void);
 int pulser_read_count(void);
-int pulser_read_done_status(void);
+int pulser_read_status(void);
+int pulser_ready(void);
+state_pulser_t get_pulser_fsm_state(void);
 
 // Helper functions for memory-mapped register access
-void pulser_write_int(int reg_offset, int value);
-int pulser_read_int(int reg_offset);
+void pulser_write(int reg_offset, int value);
+int pulser_read(int reg_offset);
 
 #endif // __PULSER_REGS_H__

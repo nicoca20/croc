@@ -13,9 +13,9 @@
 void pulser_set_values()
 {
     // *reg32(USER_PULSER_BASE_ADDR, PULSER_F1_REG_OFFSET) = 1;
-    pulser_set_f1_end_switch(4, 1);
-    pulser_set_f2_end_switch(4, 2);
-    pulser_set_f1_f2_stop_count(3, 0, 2);
+    pulser_set_f1_end_switch(4, 2);
+    pulser_set_f2_end_switch(6, 5);
+    pulser_set_f1_f2_stop_count(3, 1, 2);
 }
 
 // Function to start the pulser (set the start bit)
@@ -36,7 +36,7 @@ void pulser_set_f1_end_switch(int endvalue, int switchvalue)
     int val = ((endvalue << PULSER_F1_END_OFFSET) & PULSER_F1_END_MASK) |
               ((switchvalue << PULSER_F1_SWITCH_OFFSET) & PULSER_F1_SWITCH_MASK);
 
-    pulser_write_int(PULSER0_F1_REG, val);
+    pulser_write(PULSER0_F1_REG, val);
 }
 
 void pulser_set_f2_end_switch(int endvalue, int switchvalue)
@@ -44,7 +44,7 @@ void pulser_set_f2_end_switch(int endvalue, int switchvalue)
     int val = ((endvalue << PULSER_F2_END_OFFSET) & PULSER_F2_END_MASK) |
               ((switchvalue << PULSER_F2_SWITCH_OFFSET) & PULSER_F2_SWITCH_MASK);
 
-    pulser_write_int(PULSER0_F2_REG, val);
+    pulser_write(PULSER0_F2_REG, val);
 }
 
 void pulser_set_f1_f2_stop_count(int n_f1, int n_f2, int n_stop)
@@ -53,51 +53,62 @@ void pulser_set_f1_f2_stop_count(int n_f1, int n_f2, int n_stop)
               ((n_f2 << PULSER_N_F2_REG_OFFSET) & PULSER_COUNT_F1_MASK) |
               ((n_stop << PULSER_N_STOP_REG_OFFSET) & PULSER_COUNT_STOP_MASK);
 
-    pulser_write_int(PULSER0_COUNT_REG, val);
+    pulser_write(PULSER0_COUNT_REG, val);
 }
 
 // Read functions to fetch the current values of the pulser registers
 int pulser_read_start(void)
 {
-    return pulser_read_int(PULSER0_CFG_REG) & PULSER_START_BIT;
+    return pulser_read(PULSER0_CFG_REG) & PULSER_START_BIT;
 }
 
 int pulser_read_f1_end(void)
 {
-    return (pulser_read_int(PULSER0_F1_REG) & PULSER_F1_END_MASK) >> PULSER_F1_END_OFFSET;
+    return (pulser_read(PULSER0_F1_REG) & PULSER_F1_END_MASK) >> PULSER_F1_END_OFFSET;
 }
 
 int pulser_read_f1_switch(void)
 {
-    return (pulser_read_int(PULSER0_F1_REG) & PULSER_F1_SWITCH_MASK) >> PULSER_F1_SWITCH_OFFSET;
+    return (pulser_read(PULSER0_F1_REG) & PULSER_F1_SWITCH_MASK) >> PULSER_F1_SWITCH_OFFSET;
 }
 
 int pulser_read_f2_end(void)
 {
-    return (pulser_read_int(PULSER0_F2_REG) & PULSER_F2_END_MASK) >> PULSER_F2_END_OFFSET;
+    return (pulser_read(PULSER0_F2_REG) & PULSER_F2_END_MASK) >> PULSER_F2_END_OFFSET;
 }
 
 int pulser_read_f2_switch(void)
 {
-    return (pulser_read_int(PULSER0_F2_REG) & PULSER_F2_SWITCH_MASK) >> PULSER_F2_SWITCH_OFFSET;
+    return (pulser_read(PULSER0_F2_REG) & PULSER_F2_SWITCH_MASK) >> PULSER_F2_SWITCH_OFFSET;
 }
 
 int pulser_read_count(void)
 {
-    return pulser_read_int(PULSER0_COUNT_REG);
+    return pulser_read(PULSER0_COUNT_REG);
 }
 
-int pulser_read_done_status(void)
+int pulser_read_status(void)
 {
-    return pulser_read_int(PULSER0_STATUS_REG) & PULSER_READY_STATUS_BIT;
+    return pulser_read(PULSER0_STATUS_REG) & (PULSER_READY_STATUS_BIT | PULSER_STATE_MASK);
 }
 
-void pulser_write_int(int reg_offset, int value)
+int pulser_ready(void)
+{
+    return pulser_read(PULSER0_STATUS_REG) & PULSER_READY_STATUS_BIT;
+}
+
+state_pulser_t get_pulser_fsm_state(void)
+{
+    state_pulser_t current_state_pulser = (pulser_read_status() & PULSER_STATE_MASK) >> 1;
+    return current_state_pulser;
+}
+
+void pulser_write(int reg_offset, int value)
 {
     *reg32(USER_PULSER_BASE_ADDR, reg_offset) = value;
 }
 
-int pulser_read_int(int reg_offset)
+int pulser_read(int reg_offset)
 {
     return *reg32(USER_PULSER_BASE_ADDR, reg_offset);
 }

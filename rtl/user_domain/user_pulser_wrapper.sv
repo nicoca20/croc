@@ -155,7 +155,7 @@ module user_pulser_wrapper #(
         8'h04: resp_data = {f1_end_reg, f1_high_reg};
         8'h08: resp_data = {f2_end_reg, f2_high_reg};
         8'h0C: resp_data = {8'd0, stop_count_reg, f2_count_reg, f1_count_reg};
-        8'h10: resp_data = {31'd0, ready_status};
+        8'h10: resp_data = {28'd0, pulser_state, ready_status};
         default: resp_data = 32'hDEADBEEF;
       endcase
     end
