@@ -14,17 +14,10 @@
 #include "adv_timer.h"
 #include "user_pulser.h"
 
+#define PULSER_TO_TEST PULSER_0
+
 int main()
 {
-    // Pulser_Settings_t pulserSettings;
-    pulser_settings_t pulser0_settings;
-    pulser0_settings.f1_end = 4;
-    pulser0_settings.f1_high = 1;
-    pulser0_settings.f2_end = 4;
-    pulser0_settings.f2_high = 2;
-    pulser0_settings.f1_count = 3;
-    pulser0_settings.f2_count = 2;
-    pulser0_settings.stop_count = 2;
 
     uart_init(); // setup the uart peripheral
 
@@ -32,35 +25,120 @@ int main()
     printf("Hello World!\n");
     uart_write_flush();
 
-    pulser_set_values(&pulser0_settings);
+    pulser_settings_t pulser0_settings;
+    pulser0_settings.f1_end = 7;
+    pulser0_settings.f1_high = 3;
+    pulser0_settings.f2_end = 9;
+    pulser0_settings.f2_high = 6;
+    pulser0_settings.f1_count = 8;
+    pulser0_settings.f2_count = 5;
+    pulser0_settings.stop_count = 2;
 
-    pulser_start();
-    pulser_stop();
-    for (int i = 0; i < 10; i++)
+    pulser_settings_t pulser1_settings;
+    pulser1_settings.f1_end = 8;
+    pulser1_settings.f1_high = 4;
+    pulser1_settings.f2_end = 6;
+    pulser1_settings.f2_high = 2;
+    pulser1_settings.f1_count = 1;
+    pulser1_settings.f2_count = 9;
+    pulser1_settings.stop_count = 3;
+
+    pulser_settings_t pulser2_settings;
+    pulser2_settings.f1_end = 9;
+    pulser2_settings.f1_high = 5;
+    pulser2_settings.f2_end = 7;
+    pulser2_settings.f2_high = 3;
+    pulser2_settings.f1_count = 2;
+    pulser2_settings.f2_count = 4;
+    pulser2_settings.stop_count = 6;
+
+    pulser_settings_t pulser3_settings;
+    pulser3_settings.f1_end = 6;
+    pulser3_settings.f1_high = 2;
+    pulser3_settings.f2_end = 8;
+    pulser3_settings.f2_high = 5;
+    pulser3_settings.f1_count = 7;
+    pulser3_settings.f2_count = 1;
+    pulser3_settings.stop_count = 9;
+
+    pulser_set_values(PULSER_0, &pulser0_settings);
+    pulser_set_values(PULSER_1, &pulser1_settings);
+    pulser_set_values(PULSER_2, &pulser2_settings);
+    pulser_set_values(PULSER_3, &pulser3_settings);
+
+    // Test Pulser 0
+
+    pulser_start(1 << PULSER_0);
+    pulser_stop(1 << PULSER_0);
+    for (int i = 0; i < 2; i++)
     {
         __asm__ volatile("nop");
     }
-    pulser_start();
+    pulser_start(1 << PULSER_0);
+
+    // Test Pulser 1
+
+    pulser_start(1 << PULSER_1);
+    pulser_stop(1 << PULSER_1);
+    for (int i = 0; i < 2; i++)
+    {
+        __asm__ volatile("nop");
+    }
+    pulser_start(1 << PULSER_1);
+
+    // Test Pulser 2
+
+    pulser_start(1 << PULSER_2);
+    pulser_stop(1 << PULSER_2);
+    for (int i = 0; i < 2; i++)
+    {
+        __asm__ volatile("nop");
+    }
+    pulser_start(1 << PULSER_2);
+
+    // Test Pulser 3
+
+    pulser_start(1 << PULSER_3);
+    pulser_stop(1 << PULSER_3);
+    for (int i = 0; i < 2; i++)
+    {
+        __asm__ volatile("nop");
+    }
+    pulser_start(1 << PULSER_3);
+
+    // Test All pulsers at same time
+    for (int i = 0; i < 50; i++)
+    {
+        __asm__ volatile("nop");
+    }
+
+    pulser_start((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+    pulser_stop((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+    for (int i = 0; i < 2; i++)
+    {
+        __asm__ volatile("nop");
+    }
+    pulser_start((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
 
     // Check pulser reading functions
-    printf("Pulser state fsm: 0x%x\n", get_pulser_fsm_state());
-    uart_write_flush();
-    printf("Reading f1 end: 0x%x\n", pulser_read_f1_end());
-    uart_write_flush();
-    printf("Reading f1 switch: 0x%x\n", pulser_read_f1_switch());
-    uart_write_flush();
-    printf("Reading f2 end: 0x%x\n", pulser_read_f2_end());
-    uart_write_flush();
-    printf("Reading f2 switch: 0x%x\n", pulser_read_f2_switch());
-    uart_write_flush();
-    printf("Reading count: 0x%x\n", pulser_read_count());
-    uart_write_flush();
-    printf("Reading status: 0x%x\n", pulser_read_status());
-    uart_write_flush();
-    printf("Pulser ready: 0x%x\n", pulser_ready());
-    uart_write_flush();
-    printf("Pulser state fsm: 0x%x\n", get_pulser_fsm_state());
-    uart_write_flush();
+    // printf("Pulser state fsm: 0x%x\n", get_pulser_fsm_state(PULSER_TO_TEST));
+    // uart_write_flush();
+    // printf("Reading f1 end: 0x%x\n", pulser_read_f1_end(PULSER_TO_TEST));
+    // uart_write_flush();
+    // printf("Reading f1 switch: 0x%x\n", pulser_read_f1_switch(PULSER_TO_TEST));
+    // uart_write_flush();
+    // printf("Reading f2 end: 0x%x\n", pulser_read_f2_end(PULSER_TO_TEST));
+    // uart_write_flush();
+    // printf("Reading f2 switch: 0x%x\n", pulser_read_f2_switch(PULSER_TO_TEST));
+    // uart_write_flush();
+    // printf("Reading count: 0x%x\n", pulser_read_count(PULSER_TO_TEST));
+    // uart_write_flush();
+    // printf("Reading status: 0x%x\n", pulser_read_status(PULSER_TO_TEST));
+    // uart_write_flush();
+    // printf("Pulser ready: 0x%x\n", pulser_ready(PULSER_TO_TEST));
+    // uart_write_flush();
+    // printf("Pulser state fsm: 0x%x\n", get_pulser_fsm_state(PULSER_TO_TEST));
+    // uart_write_flush();
 
     return 1;
 }
