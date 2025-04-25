@@ -10,84 +10,94 @@
 #include "user_pulser.h"
 
 // Function to initialize the pulser (can be expanded for actual hardware initialization)
-void pulser_set_values(Pulser_Settings_t *settings)
+void pulser_set_values()
 {
     // *reg32(USER_PULSER_BASE_ADDR, PULSER_F1_REG_OFFSET) = 1;
-    pulser_set_f1_end_high(settings->f1_end, settings->f1_high);
-    pulser_set_f2_end_high(settings->f2_end, settings->f2_high);
-    pulser_set_f1_f2_stop_count(settings->f1_count, settings->f2_count, settings->stop_count);
+    pulser_set_f1_end_switch(4, 1);
+    pulser_set_f2_end_switch(4, 2);
+    pulser_set_f1_f2_stop_count(3, 0, 2);
 }
 
 // Function to start the pulser (set the start bit)
 void pulser_start(void)
 {
-    *reg32(USER_PULSER_BASE_ADDR, PULSER_START_REG_OFFSET) = 1; // Set start bit to 1 using dereferencing
+    *reg32(USER_PULSER_BASE_ADDR, PULSER0_CFG_REG) |= PULSER_START_BIT;
 }
 
 // Function to stop the pulser (clear the start bit)
 void pulser_stop(void)
 {
-    *reg32(USER_PULSER_BASE_ADDR, PULSER_START_REG_OFFSET) |= (1 << 1);
+    *reg32(USER_PULSER_BASE_ADDR, PULSER0_CFG_REG) |= PULSER_STOP_BIT;
 }
 
 // Setters for each of the pulser parameters
-void pulser_set_f1_end_high(int endvalue, int highvalue)
+void pulser_set_f1_end_switch(int endvalue, int switchvalue)
 {
-    *reg32(USER_PULSER_BASE_ADDR, PULSER_F1_REG_OFFSET) = ((endvalue << 16) & PULSER_F1_HIGH_BITS) | (highvalue & PULSER_F1_END_BITS); // Masking with the correct bitfield
+    int val = ((endvalue << PULSER_F1_END_OFFSET) & PULSER_F1_END_MASK) |
+              ((switchvalue << PULSER_F1_SWITCH_OFFSET) & PULSER_F1_SWITCH_MASK);
+
+    pulser_write_int(PULSER0_F1_REG, val);
 }
 
-void pulser_set_f2_end_high(int endvalue, int highvalue)
+void pulser_set_f2_end_switch(int endvalue, int switchvalue)
 {
-    *reg32(USER_PULSER_BASE_ADDR, PULSER_F2_REG_OFFSET) = ((endvalue << 16) & PULSER_F2_HIGH_BITS) | (highvalue & PULSER_F2_END_BITS);
+    int val = ((endvalue << PULSER_F2_END_OFFSET) & PULSER_F2_END_MASK) |
+              ((switchvalue << PULSER_F2_SWITCH_OFFSET) & PULSER_F2_SWITCH_MASK);
+
+    pulser_write_int(PULSER0_F2_REG, val);
 }
 
 void pulser_set_f1_f2_stop_count(int n_f1, int n_f2, int n_stop)
 {
-    *reg32(USER_PULSER_BASE_ADDR, PULSER_COUNT_REG_OFFSET) = (n_f1 << 0) | (n_f2 << 8) | (n_stop << 16);
+    int val = ((n_f1 << PULSER_N_F1_REG_OFFSET) & PULSER_COUNT_F1_MASK) |
+              ((n_f2 << PULSER_N_F2_REG_OFFSET) & PULSER_COUNT_F1_MASK) |
+              ((n_stop << PULSER_N_STOP_REG_OFFSET) & PULSER_COUNT_STOP_MASK);
+
+    pulser_write_int(PULSER0_COUNT_REG, val);
 }
 
 // Read functions to fetch the current values of the pulser registers
 int pulser_read_start(void)
 {
-    return *reg32(USER_PULSER_BASE_ADDR, PULSER_START_REG_OFFSET) & PULSER_START_BIT;
+    return pulser_read_int(PULSER0_CFG_REG) & PULSER_START_BIT;
 }
 
 int pulser_read_f1_end(void)
 {
-    return *reg32(USER_PULSER_BASE_ADDR, PULSER_F1_REG_OFFSET) & PULSER_F1_END_BITS;
+    return (pulser_read_int(PULSER0_F1_REG) & PULSER_F1_END_MASK) >> PULSER_F1_END_OFFSET;
 }
 
-int pulser_read_f1_high(void)
+int pulser_read_f1_switch(void)
 {
-    return *reg32(USER_PULSER_BASE_ADDR, PULSER_F1_REG_OFFSET) & PULSER_F1_HIGH_BITS;
+    return (pulser_read_int(PULSER0_F1_REG) & PULSER_F1_SWITCH_MASK) >> PULSER_F1_SWITCH_OFFSET;
 }
 
 int pulser_read_f2_end(void)
 {
-    return *reg32(USER_PULSER_BASE_ADDR, PULSER_F2_REG_OFFSET) & PULSER_F2_END_BITS;
+    return (pulser_read_int(PULSER0_F2_REG) & PULSER_F2_END_MASK) >> PULSER_F2_END_OFFSET;
 }
 
-int pulser_read_f2_high(void)
+int pulser_read_f2_switch(void)
 {
-    return *reg32(USER_PULSER_BASE_ADDR, PULSER_F2_REG_OFFSET) & PULSER_F2_HIGH_BITS;
+    return (pulser_read_int(PULSER0_F2_REG) & PULSER_F2_SWITCH_MASK) >> PULSER_F2_SWITCH_OFFSET;
 }
 
 int pulser_read_count(void)
 {
-    return *reg32(USER_PULSER_BASE_ADDR, PULSER_COUNT_REG_OFFSET);
+    return pulser_read_int(PULSER0_COUNT_REG);
 }
 
 int pulser_read_done_status(void)
 {
-    return *reg32(USER_PULSER_BASE_ADDR, PULSER_DONE_STATUS_REG) & PULSER_DONE_STATUS_BIT;
+    return pulser_read_int(PULSER0_STATUS_REG) & PULSER_READY_STATUS_BIT;
 }
 
-void pulser_write(int reg_offset, int value)
+void pulser_write_int(int reg_offset, int value)
 {
     *reg32(USER_PULSER_BASE_ADDR, reg_offset) = value;
 }
 
-int pulser_read(int reg_offset)
+int pulser_read_int(int reg_offset)
 {
     return *reg32(USER_PULSER_BASE_ADDR, reg_offset);
 }

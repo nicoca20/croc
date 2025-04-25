@@ -41,19 +41,9 @@ int main() {
 
     // simple printf support (only prints text and hex numbers)
     printf("Hello World!\n");
-    // wait until uart has finished sending
     uart_write_flush();
 
-    Pulser_Settings_t firstPulserSettings = {
-        .f1_end = 4,
-        .f1_high = 1,
-        .f2_end = 4,
-        .f2_high = 2,
-        .f1_count = 3,
-        .f2_count = 0,
-        .stop_count = 2};
-
-    pulser_set_values(&firstPulserSettings);
+    pulser_set_values();
 
     pulser_start();
     pulser_stop();
@@ -62,10 +52,6 @@ int main() {
         __asm__ volatile("nop");
     }
     pulser_start();
-    // while (!pulser_read_done_status())
-    // {
-    //     // Busy-wait until the pulser has finished its task
-    // }
 
     printf("Done with pulse sequence\n");
     uart_write_flush();
