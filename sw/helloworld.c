@@ -148,5 +148,11 @@ int main()
     // printf("Pulser state fsm: 0x%x\n", get_pulser_fsm_state(PULSER_TO_TEST));
     // uart_write_flush();
 
+    // Read Signature from ROM
+    for (int i=0; i < 3; i++){
+       printf("Rom data: %x\n", *reg32(USER_ROM_BASE_ADDR, i*4));
+       uart_write_flush();
+    }
+
     return 1;
 }
