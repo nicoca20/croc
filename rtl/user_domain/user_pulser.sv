@@ -8,9 +8,9 @@ module user_pulser (
     input  logic [7:0]      f2_count,
     input  logic [7:0]      stop_count,
     input  logic [15:0]     f1_end,
-    input  logic [15:0]     f1_high,
+    input  logic [15:0]     f1_switch,
     input  logic [15:0]     f2_end,
-    input  logic [15:0]     f2_high,
+    input  logic [15:0]     f2_switch,
 
     output logic            pulse_out,
     output logic [2:0]      state_out
@@ -35,7 +35,7 @@ module user_pulser (
 
     // Clock cycle control
     logic [15:0] current_end;
-    logic [15:0] current_high;
+    logic [15:0] current_switch;
     logic [15:0] clk_count;
     logic        pulse_done;
     logic        counter_enable;
@@ -136,31 +136,31 @@ module user_pulser (
     // Clock counter enable during pulse states
     assign counter_enable = (state == RUN_F1 || state == RUN_F2 || state == RUN_STOP);
 
-    // Dynamic assignment of current_end and high
+    // Dynamic assignment of current_end and switch
     always_comb begin
-        current_end  = 16'd0;
-        current_high = 16'd0;
-        current_count_target = 8'd0;
+        current_end             = 16'd0;
+        current_switch          = 16'd0;
+        current_count_target    =  8'd0;
         case (state)
             RUN_F1: begin
-                current_end  = f1_end;
-                current_high = f1_high;
-                current_count_target = f1_count;
+                current_end             = f1_end;
+                current_switch          = f1_switch;
+                current_count_target    = f1_count;
             end
             RUN_F2: begin
-                current_end  = f2_end;
-                current_high = f2_high;
-                current_count_target = f2_count;
+                current_end             = f2_end;
+                current_switch          = f2_switch;
+                current_count_target    = f2_count;
             end
             RUN_STOP: begin
-                current_end  = (f2_count > 0) ? f2_end : f1_end;
-                current_high = (f2_count > 0) ? f2_high : f1_high;
-                current_count_target = stop_count;
+                current_end             = (f2_count > 0) ? f2_end       : f1_end;
+                current_switch          = (f2_count > 0) ? f2_switch    : f1_switch;
+                current_count_target    = stop_count;
             end
             default: begin
-                current_end  = 16'd0;
-                current_high = 16'd0;
-                current_count_target = 8'd0;
+                current_end             = 16'd0;
+                current_switch          = 16'd0;
+                current_count_target    = 8'd0;
             end
         endcase
     end
@@ -171,16 +171,16 @@ module user_pulser (
         case (state)
             RUN_F1: begin
                 if (next_state != RUN_STOP && next_state != DONE) begin
-                    pulse_out = clk_count < current_high;
+                    pulse_out = clk_count < current_switch;
                 end
             end
             RUN_F2: begin
                 if (next_state != RUN_STOP && next_state != DONE) begin
-                    pulse_out = clk_count < current_high;
+                    pulse_out = clk_count < current_switch;
                 end
             end
             RUN_STOP: begin
-                pulse_out = ~(clk_count < current_high);
+                pulse_out = ~(clk_count < current_switch);
             end
         endcase
     end

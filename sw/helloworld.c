@@ -27,36 +27,36 @@ int main()
 
     pulser_settings_t pulser0_settings;
     pulser0_settings.f1_end = 7;
-    pulser0_settings.f1_high = 3;
+    pulser0_settings.f1_switch = 3;
     pulser0_settings.f2_end = 9;
-    pulser0_settings.f2_high = 6;
+    pulser0_settings.f2_switch = 6;
     pulser0_settings.f1_count = 8;
     pulser0_settings.f2_count = 5;
     pulser0_settings.stop_count = 2;
 
     pulser_settings_t pulser1_settings;
     pulser1_settings.f1_end = 8;
-    pulser1_settings.f1_high = 4;
+    pulser1_settings.f1_switch = 4;
     pulser1_settings.f2_end = 6;
-    pulser1_settings.f2_high = 2;
+    pulser1_settings.f2_switch = 2;
     pulser1_settings.f1_count = 1;
     pulser1_settings.f2_count = 9;
     pulser1_settings.stop_count = 3;
 
     pulser_settings_t pulser2_settings;
     pulser2_settings.f1_end = 9;
-    pulser2_settings.f1_high = 5;
+    pulser2_settings.f1_switch = 5;
     pulser2_settings.f2_end = 7;
-    pulser2_settings.f2_high = 3;
+    pulser2_settings.f2_switch = 3;
     pulser2_settings.f1_count = 2;
     pulser2_settings.f2_count = 4;
     pulser2_settings.stop_count = 6;
 
     pulser_settings_t pulser3_settings;
     pulser3_settings.f1_end = 6;
-    pulser3_settings.f1_high = 2;
+    pulser3_settings.f1_switch = 2;
     pulser3_settings.f2_end = 8;
-    pulser3_settings.f2_high = 5;
+    pulser3_settings.f2_switch = 5;
     pulser3_settings.f1_count = 7;
     pulser3_settings.f2_count = 1;
     pulser3_settings.stop_count = 9;

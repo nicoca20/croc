@@ -12,9 +12,9 @@
 typedef struct
 {
     int f1_end;
-    int f1_high;
+    int f1_switch;
     int f2_end;
-    int f2_high;
+    int f2_switch;
     int f1_count;
     int f2_count;
     int stop_count;

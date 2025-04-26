@@ -14,8 +14,8 @@
 // Function to initialize the pulser (can be expanded for actual hardware initialization)
 void pulser_set_values(pulser_id_t id, const pulser_settings_t *settings)
 {
-    pulser_set_f1_end_switch(id, settings->f1_end, settings->f1_high);
-    pulser_set_f2_end_switch(id, settings->f2_end, settings->f2_high);
+    pulser_set_f1_end_switch(id, settings->f1_end, settings->f1_switch);
+    pulser_set_f2_end_switch(id, settings->f2_end, settings->f2_switch);
     pulser_set_f1_f2_stop_count(id, settings->f1_count, settings->f2_count, settings->stop_count);
 }
 
