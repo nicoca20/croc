@@ -9,7 +9,8 @@ module user_pulser_wrapper #(
   input  logic rst_ni,
 
   input  obi_req_t obi_req_i,
-  output obi_rsp_t obi_rsp_o
+  output obi_rsp_t obi_rsp_o,
+  output logic [3:0] pulse_out
 );
 
   // Internal OBI handshake registers
