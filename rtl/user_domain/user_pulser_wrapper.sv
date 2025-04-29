@@ -3,14 +3,17 @@
 module user_pulser_wrapper #(
   parameter obi_pkg::obi_cfg_t ObiCfg    = obi_pkg::ObiDefaultConfig,
   parameter type               obi_req_t = logic,
-  parameter type               obi_rsp_t = logic
+  parameter type               obi_rsp_t = logic,
+  parameter N_PULSER_INST                = 4,
+  parameter PULSER_SEL_ADDR_WIDTH        = 2
 ) (
   input  logic clk_i,
   input  logic rst_ni,
 
   input  obi_req_t obi_req_i,
   output obi_rsp_t obi_rsp_o,
-  output logic [3:0] pulse_out
+
+  output logic [N_PULSER_INST-1:0] pulse_out
 );
 
   // Internal OBI handshake registers
@@ -24,19 +27,18 @@ module user_pulser_wrapper #(
   logic rsp_err;
 
   // Address decode
-  logic [7:0] addr_obi;
-  logic [1:0] pulser_sel;
-  logic [4:0] reg_addr;
+  logic [7:0]                       addr_obi;
+  logic [PULSER_SEL_ADDR_WIDTH-1:0] pulser_sel;
+  logic [4:0]                       reg_addr;
 
   // Signals per pulser (arrays of 4)
-  logic [3:0][15:0] f1_end, f1_switch, f2_end, f2_switch;
-  logic [3:0][7:0]  f1_count, f2_count, stop_count;
-  logic [3:0][2:0]  state;
-  logic [3:0]       ready;
-  logic [3:0]       pulse_out;
+  logic [N_PULSER_INST-1:0][15:0] f1_end, f1_switch, f2_end, f2_switch;
+  logic [N_PULSER_INST-1:0][7:0]  f1_count, f2_count, stop_count;
+  logic [N_PULSER_INST-1:0][2:0]  state;
+  logic [N_PULSER_INST-1:0]       ready;
 
   // Pulse control (single wires)
-  logic [3:0]       start_pulse, stop_pulse;
+  logic [N_PULSER_INST-1:0]       start_pulse, stop_pulse;
 
   // Register updates
   `FF(req_q, req_d, '0);
@@ -59,17 +61,17 @@ module user_pulser_wrapper #(
   assign obi_rsp_o.r.r_optional = '0;
 
   assign addr_obi    = addr_q[7:0];
-  assign pulser_sel  = addr_obi[6:5];  // which pulser (0–3)
+  assign pulser_sel  = addr_obi[5+PULSER_SEL_ADDR_WIDTH-1:5];  // which pulser
   assign reg_addr    = addr_obi[4:0];  // offset within pulser
 
   // start/stop pulse generation — no register, just edge trigger
   // Important: all pulser can be started and stopped with one write at 0x00
   always_comb begin
-    start_pulse = 4'b0;
-    stop_pulse  = 4'b0;
+    start_pulse = 0;
+    stop_pulse  = 0;
     if (req_q && we_q && addr_obi == 5'h00) begin
-      start_pulse = wdata_q[3:0];
-      stop_pulse  = wdata_q[7:4];
+      start_pulse = wdata_q[N_PULSER_INST-1:0];
+      stop_pulse  = wdata_q[2*N_PULSER_INST-1:N_PULSER_INST];
     end
   end
 
@@ -108,7 +110,7 @@ module user_pulser_wrapper #(
 
   // Instantiate 4 pulsers
   generate
-    for (genvar i = 0; i < 4; i++) begin : gen_pulsers
+    for (genvar i = 0; i < N_PULSER_INST; i++) begin : gen_pulsers
       user_pulser i_pulser (
         .clk_i      (clk_i),
         .rst_ni     (rst_ni),
