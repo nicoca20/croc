@@ -1,21 +1,29 @@
+//-----------------------------------------------------------------------------------------------
 // Copyright 2025 ETH Zurich and University of Bologna.
 // Solderpad Hardware License, Version 0.51, see LICENSE for details.
 // SPDX-License-Identifier: SHL-0.51
 //
 // Authors:
 // - Nico Canzani <ncanzani@student.ethz.ch>
+//-----------------------------------------------------------------------------------------------
 
+//-----------------------------------------------------------------------------------------------
+// Include common register macros (e.g., `FF for flip-flops)
+//-----------------------------------------------------------------------------------------------
 `include "common_cells/registers.svh"
 
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
 // Pulser Register Map Definitions (relative to BASEADDR)
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
 `define REG_PULSER_CMD           8'h00  // Start/Stop command register
 `define REG_PULSER_F1_CFG        8'h04  // F1 Switch and End configuration
 `define REG_PULSER_F2_CFG        8'h08  // F2 Switch and End configuration
 `define REG_PULSER_COUNT_CFG     8'h0C  // F1/F2/Stop count configuration
 `define REG_PULSER_STATUS        8'h10  // State + Ready status
 
+//-----------------------------------------------------------------------------------------------
+// Top-level wrapper module for multiple user_pulser instances
+//-----------------------------------------------------------------------------------------------
 module user_pulser_wrapper #(
   parameter obi_pkg::obi_cfg_t ObiCfg               = obi_pkg::ObiDefaultConfig,
   parameter type               obi_req_t            = logic,
@@ -32,7 +40,9 @@ module user_pulser_wrapper #(
   output logic [N_PULSER_INST-1:0] pulse_o
 );
 
-  // Internal OBI handshake registers
+  //-----------------------------------------------------------------------------------------------
+  // Internal OBI handshake registers for tracking request context
+  //-----------------------------------------------------------------------------------------------
   logic req_d, req_q;
   logic we_d, we_q;
   logic [ObiCfg.AddrWidth-1:0] addr_d, addr_q;
@@ -42,12 +52,16 @@ module user_pulser_wrapper #(
   logic [ObiCfg.DataWidth-1:0] resp_data;
   logic rsp_err;
 
-  // Address decode
+  //-----------------------------------------------------------------------------------------------
+  // Address decode signals (for register addressing and instance selection)
+  //-----------------------------------------------------------------------------------------------
   logic [7:0] addr_obi;
   logic [PULSER_SEL_ADDR_WIDTH-1:0] pulser_sel;
   logic [4:0] reg_addr;
 
-  // Per-pulser signals
+  //-----------------------------------------------------------------------------------------------
+  // Per-pulser configuration registers (D/Q pairs for FFs)
+  //-----------------------------------------------------------------------------------------------
   logic [N_PULSER_INST-1:0][15:0] f1_end_q, f1_end_d;
   logic [N_PULSER_INST-1:0][15:0] f1_switch_q, f1_switch_d;
   logic [N_PULSER_INST-1:0][15:0] f2_end_q, f2_end_d;
@@ -61,7 +75,9 @@ module user_pulser_wrapper #(
 
   logic [N_PULSER_INST-1:0]       start_pulse, stop_pulse;
 
-  // Register updates
+  //-----------------------------------------------------------------------------------------------
+  // Register updates using `FF macro for flip-flops
+  //-----------------------------------------------------------------------------------------------
   `FF(req_q, req_d, '0);
   `FF(id_q , id_d , '0);
   `FF(we_q , we_d , '0);
@@ -76,12 +92,18 @@ module user_pulser_wrapper #(
   `FF(f2_count_q   , f2_count_d   , '0)
   `FF(stop_count_q , stop_count_d , '0)
 
+  //-----------------------------------------------------------------------------------------------
+  // Capture OBI request on input
+  //-----------------------------------------------------------------------------------------------
   assign req_d    = obi_req_i.req;
   assign id_d     = obi_req_i.a.aid;
   assign we_d     = obi_req_i.a.we;
   assign addr_d   = obi_req_i.a.addr;
   assign wdata_d  = obi_req_i.a.wdata;
 
+  //-----------------------------------------------------------------------------------------------
+  // OBI response logic
+  //-----------------------------------------------------------------------------------------------
   assign obi_rsp_o.gnt          = obi_req_i.req;
   assign obi_rsp_o.rvalid       = req_q;
   assign obi_rsp_o.r.rdata      = resp_data;
@@ -89,11 +111,16 @@ module user_pulser_wrapper #(
   assign obi_rsp_o.r.err        = rsp_err;
   assign obi_rsp_o.r.r_optional = '0;
 
+  //-----------------------------------------------------------------------------------------------
+  // Address decoding (supports multiple pulsers via upper bits)
+  //-----------------------------------------------------------------------------------------------
   assign addr_obi   = addr_q[7:0];
   assign pulser_sel = addr_obi[5 + PULSER_SEL_ADDR_WIDTH - 1 : 5];
   assign reg_addr   = addr_obi[4:0];
 
-  // Start/stop pulse generation
+  //-----------------------------------------------------------------------------------------------
+  // Command register decoding: generate start/stop pulses for instances
+  //-----------------------------------------------------------------------------------------------
   always_comb begin
     start_pulse = '0;
     stop_pulse  = '0;
@@ -104,7 +131,9 @@ module user_pulser_wrapper #(
     end
   end
 
-  // Register file writes
+  //-----------------------------------------------------------------------------------------------
+  // Write logic for configuration registers
+  //-----------------------------------------------------------------------------------------------
   always_comb begin
     f1_end_d      = f1_end_q;
     f1_switch_d   = f1_switch_q;
@@ -134,7 +163,9 @@ module user_pulser_wrapper #(
     end
   end
 
+  //-----------------------------------------------------------------------------------------------
   // Pulser instantiations
+  //-----------------------------------------------------------------------------------------------
   for (genvar ii = 0; ii < N_PULSER_INST; ii++) begin : gen_pulsers
     user_pulser i_pulser (
       .clk_i        (clk_i),
@@ -153,7 +184,9 @@ module user_pulser_wrapper #(
     );
   end
 
-  // Ready signal = IDLE or DONE
+  //-----------------------------------------------------------------------------------------------
+  // READY signal: high when pulser is in IDLE or DONE state
+  //-----------------------------------------------------------------------------------------------
   localparam IDLE_STATE = 3'd0;
   localparam DONE_STATE = 3'd4;
 
@@ -163,7 +196,9 @@ module user_pulser_wrapper #(
     end
   end
 
-  // Read interface
+  //-----------------------------------------------------------------------------------------------
+  // Read logic for returning register values
+  //-----------------------------------------------------------------------------------------------
   always_comb begin
     resp_data = 32'd0;
     if (req_q && !we_q) begin
