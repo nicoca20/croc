@@ -125,6 +125,10 @@ module user_pulser (
         DONE: begin
           state_d = IDLE;
         end
+
+        default: begin
+          state_d = IDLE;
+        end
       endcase
     end
   end
@@ -185,6 +189,9 @@ module user_pulser (
       end
       RUN_STOP: begin
         pulse_o = ~(clk_count < current_switch);
+      end
+      default: begin
+        pulse_o = '0;
       end
     endcase
   end

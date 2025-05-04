@@ -126,25 +126,23 @@ module user_pulser_wrapper #(
   end
 
   // Pulser instantiations
-  generate
-    for (genvar i = 0; i < N_PULSER_INST; i++) begin : gen_pulsers
-      user_pulser i_pulser (
-        .clk_i        (clk_i),
-        .rst_ni       (rst_ni),
-        .start_i      (start_pulse[i]),
-        .stop_i       (stop_pulse[i]),
-        .f1_cnt_i     (f1_count_q[i]),
-        .f2_cnt_i     (f2_count_q[i]),
-        .stop_cnt_i   (stop_count_q[i]),
-        .f1_end_i     (f1_end_q[i]),
-        .f1_switch_i  (f1_switch_q[i]),
-        .f2_end_i     (f2_end_q[i]),
-        .f2_switch_i  (f2_switch_q[i]),
-        .pulse_o      (pulse_o[i]),
-        .state_o      (state[i])
-      );
-    end
-  endgenerate
+  for (genvar ii = 0; ii < N_PULSER_INST; ii++) begin : gen_pulsers
+    user_pulser i_pulser (
+      .clk_i        (clk_i),
+      .rst_ni       (rst_ni),
+      .start_i      (start_pulse[ii]),
+      .stop_i       (stop_pulse[ii]),
+      .f1_cnt_i     (f1_count_q[ii]),
+      .f2_cnt_i     (f2_count_q[ii]),
+      .stop_cnt_i   (stop_count_q[ii]),
+      .f1_end_i     (f1_end_q[ii]),
+      .f1_switch_i  (f1_switch_q[ii]),
+      .f2_end_i     (f2_end_q[ii]),
+      .f2_switch_i  (f2_switch_q[ii]),
+      .pulse_o      (pulse_o[ii]),
+      .state_o      (state[ii])
+    );
+  end
 
   // Ready signal = IDLE or DONE
   localparam IDLE_STATE = 3'd0;
