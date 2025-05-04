@@ -7,6 +7,15 @@
 
 `include "common_cells/registers.svh"
 
+//------------------------------------------------------------------------------
+// Pulser Register Map Definitions (relative to BASEADDR)
+//------------------------------------------------------------------------------
+`define REG_PULSER_CMD           8'h00  // Start/Stop command register
+`define REG_PULSER_F1_CFG        8'h04  // F1 Switch and End configuration
+`define REG_PULSER_F2_CFG        8'h08  // F2 Switch and End configuration
+`define REG_PULSER_COUNT_CFG     8'h0C  // F1/F2/Stop count configuration
+`define REG_PULSER_STATUS        8'h10  // State + Ready status
+
 module user_pulser_wrapper #(
   parameter obi_pkg::obi_cfg_t ObiCfg               = obi_pkg::ObiDefaultConfig,
   parameter type               obi_req_t            = logic,
@@ -107,15 +116,15 @@ module user_pulser_wrapper #(
 
     if (req_q && we_q) begin
       case (reg_addr)
-        5'h04: begin
+        `REG_PULSER_F1_CFG: begin
           f1_switch_d[pulser_sel] = wdata_q[15:0];
           f1_end_d[pulser_sel]    = wdata_q[31:16];
         end
-        5'h08: begin
+        `REG_PULSER_F2_CFG: begin
           f2_switch_d[pulser_sel] = wdata_q[15:0];
           f2_end_d[pulser_sel]    = wdata_q[31:16];
         end
-        5'h0C: begin
+        `REG_PULSER_COUNT_CFG: begin
           f1_count_d[pulser_sel]   = wdata_q[7:0];
           f2_count_d[pulser_sel]   = wdata_q[15:8];
           stop_count_d[pulser_sel] = wdata_q[23:16];
@@ -159,21 +168,21 @@ module user_pulser_wrapper #(
     resp_data = 32'd0;
     if (req_q && !we_q) begin
       case (reg_addr)
-        5'h00: resp_data = 32'd0;
-        5'h04: resp_data = {f1_end_q[pulser_sel], f1_switch_q[pulser_sel]};
-        5'h08: resp_data = {f2_end_q[pulser_sel], f2_switch_q[pulser_sel]};
-        5'h0C: resp_data = {
+        `REG_PULSER_CMD:        resp_data = 32'd0;
+        `REG_PULSER_F1_CFG:     resp_data = {f1_end_q[pulser_sel], f1_switch_q[pulser_sel]};
+        `REG_PULSER_F2_CFG:     resp_data = {f2_end_q[pulser_sel], f2_switch_q[pulser_sel]};
+        `REG_PULSER_COUNT_CFG:  resp_data = {
           8'd0,
           stop_count_q[pulser_sel],
           f2_count_q[pulser_sel],
           f1_count_q[pulser_sel]
         };
-        5'h10: resp_data = {
+        `REG_PULSER_STATUS:     resp_data = {
           28'd0,
           state[pulser_sel],
           ready[pulser_sel]
         };
-        default: resp_data = 32'hDEADBEEF;
+        default:                resp_data = 32'hDEADBEEF;
       endcase
     end
   end
