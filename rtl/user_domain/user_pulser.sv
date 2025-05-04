@@ -36,7 +36,7 @@ module user_pulser (
 
   state_e state_d, state_q;
 
-  // Pulse counters
+  // Pulse counter
   logic       pulse_counter_done;
   logic [7:0] pulse_cnt_d, pulse_cnt_q;
 
@@ -53,8 +53,6 @@ module user_pulser (
   `FF(state_q , state_d , IDLE);
   `FF(pulse_cnt_q, pulse_cnt_d , '0);
 
-  assign state_o = state_q;
-
   counter #(
     .WIDTH($bits(clk_count)),
     .STICKY_OVERFLOW(1'b0)
@@ -70,7 +68,9 @@ module user_pulser (
     .overflow_o ()
   );
 
-  assign rst_counter = pulse_done | stop_i | !rst_ni | !counter_enable;
+  assign state_o = state_q;
+
+  assign rst_counter = pulse_done | stop_i | !counter_enable;
   assign pulse_done  = clk_count == (current_end - 1);
 
   always_comb begin
@@ -137,7 +137,7 @@ module user_pulser (
   always_comb begin
     pulse_cnt_d = pulse_cnt_q;
 
-    if (!rst_ni || (state_q != state_d)) begin
+    if (state_q != state_d) begin
       pulse_cnt_d = 8'd0;
     end else if (pulse_done) begin
       pulse_cnt_d = pulse_cnt_q + 1;
