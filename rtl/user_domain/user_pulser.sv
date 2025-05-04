@@ -41,17 +41,24 @@ module user_pulser (
     logic        counter_enable;
     logic        rst_counter;
 
-    assign rst_counter = rst_ni | stop;
-
-    // Clock counter instance
-    user_simple_counter i_counter (
+    counter #(
+        .WIDTH($bits(clk_count)),
+        .STICKY_OVERFLOW(1'b0)
+    ) i_counter_common_cells (
         .clk_i      (clk_i),
         .rst_ni     (rst_ni),
-        .enable     (counter_enable),
-        .end_val    (current_end),
-        .count      (clk_count),
-        .done       (pulse_done)
+        .clear_i    (1'b0),
+        .en_i       (counter_enable),
+        .load_i     (rst_counter),
+        .down_i     (1'b0),
+        .d_i        ({$bits(clk_count){1'b0}}),
+        .q_o        (clk_count),
+        .overflow_o ()
     );
+
+    assign rst_counter = pulse_done | stop | !rst_ni | !counter_enable;
+
+    assign pulse_done = clk_count == (current_end-1);
 
     // State machine
     always_ff @(posedge clk_i or negedge rst_ni) begin
