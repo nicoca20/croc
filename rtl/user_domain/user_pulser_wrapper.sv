@@ -39,10 +39,17 @@ module user_pulser_wrapper #(
   logic [4:0] reg_addr;
 
   // Per-pulser signals
-  logic [N_PULSER_INST-1:0][15:0] f1_end, f1_switch, f2_end, f2_switch;
-  logic [N_PULSER_INST-1:0][7:0]  f1_count, f2_count, stop_count;
+  logic [N_PULSER_INST-1:0][15:0] f1_end_q, f1_end_d;
+  logic [N_PULSER_INST-1:0][15:0] f1_switch_q, f1_switch_d;
+  logic [N_PULSER_INST-1:0][15:0] f2_end_q, f2_end_d;
+  logic [N_PULSER_INST-1:0][15:0] f2_switch_q, f2_switch_d;
+  logic [N_PULSER_INST-1:0][7:0]  f1_count_q, f1_count_d;
+  logic [N_PULSER_INST-1:0][7:0]  f2_count_q, f2_count_d;
+  logic [N_PULSER_INST-1:0][7:0]  stop_count_q, stop_count_d;
+
   logic [N_PULSER_INST-1:0][2:0]  state;
   logic [N_PULSER_INST-1:0]       ready;
+
   logic [N_PULSER_INST-1:0]       start_pulse, stop_pulse;
 
   // Register updates
@@ -51,6 +58,14 @@ module user_pulser_wrapper #(
   `FF(we_q , we_d , '0);
   `FF(wdata_q , wdata_d , '0);
   `FF(addr_q , addr_d , '0);
+
+  `FF(f1_end_q     , f1_end_d     , '0)
+  `FF(f1_switch_q  , f1_switch_d  , '0)
+  `FF(f2_end_q     , f2_end_d     , '0)
+  `FF(f2_switch_q  , f2_switch_d  , '0)
+  `FF(f1_count_q   , f1_count_d   , '0)
+  `FF(f2_count_q   , f2_count_d   , '0)
+  `FF(stop_count_q , stop_count_d , '0)
 
   assign req_d    = obi_req_i.req;
   assign id_d     = obi_req_i.a.aid;
@@ -81,30 +96,29 @@ module user_pulser_wrapper #(
   end
 
   // Register file writes
-  always_ff @(posedge clk_i or negedge rst_ni) begin
-    if (!rst_ni) begin
-      f1_end      <= '0;
-      f1_switch   <= '0;
-      f2_end      <= '0;
-      f2_switch   <= '0;
-      f1_count    <= '0;
-      f2_count    <= '0;
-      stop_count  <= '0;
-    end else if (req_q && we_q) begin
+  always_comb begin
+    f1_end_d      = f1_end_q;
+    f1_switch_d   = f1_switch_q;
+    f2_end_d      = f2_end_q;
+    f2_switch_d   = f2_switch_q;
+    f1_count_d    = f1_count_q;
+    f2_count_d    = f2_count_q;
+    stop_count_d  = stop_count_q;
+
+    if (req_q && we_q) begin
       case (reg_addr)
-        5'h00: ; // Pulse control, handled separately
         5'h04: begin
-          f1_switch[pulser_sel] <= wdata_q[15:0];
-          f1_end[pulser_sel]    <= wdata_q[31:16];
+          f1_switch_d[pulser_sel] = wdata_q[15:0];
+          f1_end_d[pulser_sel]    = wdata_q[31:16];
         end
         5'h08: begin
-          f2_switch[pulser_sel] <= wdata_q[15:0];
-          f2_end[pulser_sel]    <= wdata_q[31:16];
+          f2_switch_d[pulser_sel] = wdata_q[15:0];
+          f2_end_d[pulser_sel]    = wdata_q[31:16];
         end
         5'h0C: begin
-          f1_count[pulser_sel]   <= wdata_q[7:0];
-          f2_count[pulser_sel]   <= wdata_q[15:8];
-          stop_count[pulser_sel] <= wdata_q[23:16];
+          f1_count_d[pulser_sel]   = wdata_q[7:0];
+          f2_count_d[pulser_sel]   = wdata_q[15:8];
+          stop_count_d[pulser_sel] = wdata_q[23:16];
         end
         default: ;
       endcase
@@ -119,13 +133,13 @@ module user_pulser_wrapper #(
         .rst_ni       (rst_ni),
         .start_i      (start_pulse[i]),
         .stop_i       (stop_pulse[i]),
-        .f1_cnt_i     (f1_count[i]),
-        .f2_cnt_i     (f2_count[i]),
-        .stop_cnt_i   (stop_count[i]),
-        .f1_end_i     (f1_end[i]),
-        .f1_switch_i  (f1_switch[i]),
-        .f2_end_i     (f2_end[i]),
-        .f2_switch_i  (f2_switch[i]),
+        .f1_cnt_i     (f1_count_q[i]),
+        .f2_cnt_i     (f2_count_q[i]),
+        .stop_cnt_i   (stop_count_q[i]),
+        .f1_end_i     (f1_end_q[i]),
+        .f1_switch_i  (f1_switch_q[i]),
+        .f2_end_i     (f2_end_q[i]),
+        .f2_switch_i  (f2_switch_q[i]),
         .pulse_o      (pulse_o[i]),
         .state_o      (state[i])
       );
@@ -148,13 +162,13 @@ module user_pulser_wrapper #(
     if (req_q && !we_q) begin
       case (reg_addr)
         5'h00: resp_data = 32'd0;
-        5'h04: resp_data = {f1_end[pulser_sel], f1_switch[pulser_sel]};
-        5'h08: resp_data = {f2_end[pulser_sel], f2_switch[pulser_sel]};
+        5'h04: resp_data = {f1_end_q[pulser_sel], f1_switch_q[pulser_sel]};
+        5'h08: resp_data = {f2_end_q[pulser_sel], f2_switch_q[pulser_sel]};
         5'h0C: resp_data = {
           8'd0,
-          stop_count[pulser_sel],
-          f2_count[pulser_sel],
-          f1_count[pulser_sel]
+          stop_count_q[pulser_sel],
+          f2_count_q[pulser_sel],
+          f1_count_q[pulser_sel]
         };
         5'h10: resp_data = {
           28'd0,
