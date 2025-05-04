@@ -193,7 +193,7 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
     .rst_ni       ( rst_ni              ),
     .obi_req_i    ( user_pulser_obi_req ),
     .obi_rsp_o    ( user_pulser_obi_rsp ),
-    .pulse_out    (  )
+    .pulse_o      (  )
   );
 
 endmodule

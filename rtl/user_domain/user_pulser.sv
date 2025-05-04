@@ -2,18 +2,18 @@ module user_pulser (
     input  logic            clk_i,
     input  logic            rst_ni,
 
-    input  logic            start,
-    input  logic            stop,
-    input  logic [7:0]      f1_count,
-    input  logic [7:0]      f2_count,
-    input  logic [7:0]      stop_count,
-    input  logic [15:0]     f1_end,
-    input  logic [15:0]     f1_switch,
-    input  logic [15:0]     f2_end,
-    input  logic [15:0]     f2_switch,
+    input  logic            start_i,
+    input  logic            stop_i,
+    input  logic [7:0]      f1_cnt_i,
+    input  logic [7:0]      f2_cnt_i,
+    input  logic [7:0]      stop_cnt_i,
+    input  logic [15:0]     f1_end_i,
+    input  logic [15:0]     f1_switch_i,
+    input  logic [15:0]     f2_end_i,
+    input  logic [15:0]     f2_switch_i,
 
-    output logic            pulse_out,
-    output logic [2:0]      state_out
+    output logic            pulse_o,
+    output logic [2:0]      state_o
 );
 
     typedef enum logic [2:0] {
@@ -25,7 +25,7 @@ module user_pulser (
     } state_t;
 
     state_t state, next_state;
-    assign state_out = state;
+    assign pulse_o = state;
 
     // Pulse counters
     logic [7:0] pulse_counter;
@@ -56,7 +56,7 @@ module user_pulser (
         .overflow_o ()
     );
 
-    assign rst_counter = pulse_done | stop | !rst_ni | !counter_enable;
+    assign rst_counter = pulse_done | stop_i | !rst_ni | !counter_enable;
 
     assign pulse_done = clk_count == (current_end-1);
 
@@ -72,18 +72,18 @@ module user_pulser (
     always_comb begin
         next_state = state;
         
-        if (stop) begin
+        if (stop_i) begin
             next_state = IDLE;
         end else begin
             
             case (state)
                 IDLE: begin
-                    if (start) begin
-                        if (f1_count > 0 && f1_end > 0) begin
+                    if (start_i) begin
+                        if (f1_cnt_i > 0 && f1_end_i > 0) begin
                             next_state = RUN_F1;
-                        end else if (f2_count > 0 && f2_end > 0) begin
+                        end else if (f2_cnt_i > 0 && f2_end_i > 0) begin
                             next_state = RUN_F2;
-                        end else if (stop_count > 0) begin
+                        end else if (stop_cnt_i > 0) begin
                             next_state = RUN_STOP;
                         end else begin
                             next_state = DONE;
@@ -93,9 +93,9 @@ module user_pulser (
 
                 RUN_F1: begin
                     if (pulse_counter_done) begin
-                        if (f2_count > 0 && f2_end > 0) begin
+                        if (f2_cnt_i > 0 && f2_end_i > 0) begin
                             next_state = RUN_F2;
-                        end else if (stop_count > 0) begin
+                        end else if (stop_cnt_i > 0) begin
                             next_state = RUN_STOP;
                         end else begin
                             next_state = DONE;
@@ -105,7 +105,7 @@ module user_pulser (
 
                 RUN_F2: begin
                     if (pulse_counter_done) begin
-                        if (stop_count > 0) begin
+                        if (stop_cnt_i > 0) begin
                             next_state = RUN_STOP;
                         end else begin
                             next_state = DONE;
@@ -150,19 +150,19 @@ module user_pulser (
         current_count_target    =  8'd0;
         case (state)
             RUN_F1: begin
-                current_end             = f1_end;
-                current_switch          = f1_switch;
-                current_count_target    = f1_count;
+                current_end             = f1_end_i;
+                current_switch          = f1_switch_i;
+                current_count_target    = f1_cnt_i;
             end
             RUN_F2: begin
-                current_end             = f2_end;
-                current_switch          = f2_switch;
-                current_count_target    = f2_count;
+                current_end             = f2_end_i;
+                current_switch          = f2_switch_i;
+                current_count_target    = f2_cnt_i;
             end
             RUN_STOP: begin
-                current_end             = (f2_count > 0) ? f2_end       : f1_end;
-                current_switch          = (f2_count > 0) ? f2_switch    : f1_switch;
-                current_count_target    = stop_count;
+                current_end             = (f2_cnt_i > 0) ? f2_end_i     : f1_end_i;
+                current_switch          = (f2_cnt_i > 0) ? f2_switch_i  : f1_switch_i;
+                current_count_target    = stop_cnt_i;
             end
             default: begin
                 current_end             = 16'd0;
@@ -174,20 +174,20 @@ module user_pulser (
 
     // Pulse output logic
     always_comb begin
-        pulse_out = 1'd0;
+        pulse_o = 1'd0;
         case (state)
             RUN_F1: begin
                 if (next_state != RUN_STOP && next_state != DONE) begin
-                    pulse_out = clk_count < current_switch;
+                    pulse_o = clk_count < current_switch;
                 end
             end
             RUN_F2: begin
                 if (next_state != RUN_STOP && next_state != DONE) begin
-                    pulse_out = clk_count < current_switch;
+                    pulse_o = clk_count < current_switch;
                 end
             end
             RUN_STOP: begin
-                pulse_out = ~(clk_count < current_switch);
+                pulse_o = ~(clk_count < current_switch);
             end
         endcase
     end

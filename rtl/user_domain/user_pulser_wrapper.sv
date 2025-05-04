@@ -13,7 +13,7 @@ module user_pulser_wrapper #(
   input  obi_req_t obi_req_i,
   output obi_rsp_t obi_rsp_o,
 
-  output logic [N_PULSER_INST-1:0] pulse_out
+  output logic [N_PULSER_INST-1:0] pulse_o
 );
 
   // Internal OBI handshake registers
@@ -112,19 +112,19 @@ module user_pulser_wrapper #(
   generate
     for (genvar i = 0; i < N_PULSER_INST; i++) begin : gen_pulsers
       user_pulser i_pulser (
-        .clk_i      (clk_i),
-        .rst_ni     (rst_ni),
-        .start      (start_pulse[i]),
-        .stop       (stop_pulse[i]),
-        .f1_count   (f1_count[i]),
-        .f2_count   (f2_count[i]),
-        .stop_count (stop_count[i]),
-        .f1_end     (f1_end[i]),
-        .f1_switch  (f1_switch[i]),
-        .f2_end     (f2_end[i]),
-        .f2_switch  (f2_switch[i]),
-        .pulse_out  (pulse_out[i]),
-        .state_out  (state[i])
+        .clk_i        (clk_i),
+        .rst_ni       (rst_ni),
+        .start_i      (start_pulse[i]),
+        .stop_i       (stop_pulse[i]),
+        .f1_cnt_i     (f1_count[i]),
+        .f2_cnt_i     (f2_count[i]),
+        .stop_cnt_i   (stop_count[i]),
+        .f1_end_i     (f1_end[i]),
+        .f1_switch_i  (f1_switch[i]),
+        .f2_end_i     (f2_end[i]),
+        .f2_switch_i  (f2_switch[i]),
+        .pulse_o      (pulse_o[i]),
+        .state_o      (state[i])
       );
     end
   endgenerate
