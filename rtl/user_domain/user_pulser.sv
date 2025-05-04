@@ -36,7 +36,7 @@ module user_pulser (
   } state_t;
 
   state_t state, next_state;
-  assign pulse_o = state;
+  assign state_o = state;
 
   // Pulse counters
   logic [7:0] pulse_counter;
