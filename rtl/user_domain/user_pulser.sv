@@ -32,9 +32,9 @@ module user_pulser (
     RUN_F2,
     RUN_STOP,
     DONE
-  } state_t;
+  } state_e;
 
-  state_t state_d, state_q;
+  state_e state_d, state_q;
 
   // Pulse counters
   logic       pulse_counter_done;
