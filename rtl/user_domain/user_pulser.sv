@@ -1,3 +1,14 @@
+// Copyright 2025 ETH Zurich and University of Bologna.
+// Solderpad Hardware License, Version 0.51, see LICENSE for details.
+// SPDX-License-Identifier: SHL-0.51
+//
+// Authors:
+// - Nico Canzani <ncanzani@student.ethz.ch>
+
+// gives us the `FF(...) macro making it easy to have properly defined flip-flops
+
+`include "common_cells/registers.svh"
+
 module user_pulser (
   input  logic            clk_i,
   input  logic            rst_ni,

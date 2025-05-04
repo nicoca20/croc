@@ -1,3 +1,10 @@
+// Copyright 2025 ETH Zurich and University of Bologna.
+// Solderpad Hardware License, Version 0.51, see LICENSE for details.
+// SPDX-License-Identifier: SHL-0.51
+//
+// Authors:
+// - Nico Canzani <ncanzani@student.ethz.ch>
+
 `include "common_cells/registers.svh"
 
 module user_pulser_wrapper #(
