@@ -18,6 +18,8 @@ typedef struct
     int f1_count;
     int f2_count;
     int stop_count;
+    int invert_out;
+    int idle_high;
 } pulser_settings_t;
 
 // Finite state Machine states of pulser
@@ -46,6 +48,7 @@ typedef enum
 #define PULSER_F2_REG 0x08
 #define PULSER_COUNT_REG 0x0C
 #define PULSER_STATUS_REG 0x10
+#define REG_PULSER_OUT_CTRL 0x14
 
 // Macros for bit field extractions (based on Verilog signal widths)
 #define PULSER_START_BIT (1 << 0)
@@ -74,6 +77,7 @@ typedef enum
 
 // Function prototypes
 void pulser_set_values(pulser_id_t id, const pulser_settings_t *settings);
+void pulser_config(pulser_id_t id, const pulser_settings_t *settings);
 void pulser_start(int pulser_to_start);
 void pulser_stop(int pulser_to_stop);
 

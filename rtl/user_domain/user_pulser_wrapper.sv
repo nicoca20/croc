@@ -20,6 +20,7 @@
 `define REG_PULSER_F2_CFG        8'h08  // F2 Switch and End configuration
 `define REG_PULSER_COUNT_CFG     8'h0C  // F1/F2/Stop count configuration
 `define REG_PULSER_STATUS        8'h10  // State + Ready status
+`define REG_PULSER_OUT_CTRL      8'h14  // Control idle and invert output
 
 //-----------------------------------------------------------------------------------------------
 // Top-level wrapper module for multiple user_pulser instances
@@ -70,6 +71,9 @@ module user_pulser_wrapper #(
   logic [N_PULSER_INST-1:0][7:0]  f2_count_q, f2_count_d;
   logic [N_PULSER_INST-1:0][7:0]  stop_count_q, stop_count_d;
 
+  logic [N_PULSER_INST-1:0]       idle_out_q, idle_out_d;
+  logic [N_PULSER_INST-1:0]       invert_out_q, invert_out_d;
+
   logic [N_PULSER_INST-1:0][2:0]  state;
   logic [N_PULSER_INST-1:0]       ready;
 
@@ -78,11 +82,11 @@ module user_pulser_wrapper #(
   //-----------------------------------------------------------------------------------------------
   // Register updates using `FF macro for flip-flops
   //-----------------------------------------------------------------------------------------------
-  `FF(req_q, req_d, '0);
-  `FF(id_q , id_d , '0);
-  `FF(we_q , we_d , '0);
+  `FF(req_q   , req_d   , '0);
+  `FF(id_q    , id_d    , '0);
+  `FF(we_q    , we_d    , '0);
   `FF(wdata_q , wdata_d , '0);
-  `FF(addr_q , addr_d , '0);
+  `FF(addr_q  , addr_d  , '0);
 
   `FF(f1_end_q     , f1_end_d     , '0)
   `FF(f1_switch_q  , f1_switch_d  , '0)
@@ -91,6 +95,9 @@ module user_pulser_wrapper #(
   `FF(f1_count_q   , f1_count_d   , '0)
   `FF(f2_count_q   , f2_count_d   , '0)
   `FF(stop_count_q , stop_count_d , '0)
+
+  `FF(invert_out_q , invert_out_d , '0)
+  `FF(idle_out_q   , idle_out_d   , '0)
 
   //-----------------------------------------------------------------------------------------------
   // Capture OBI request on input
@@ -142,6 +149,8 @@ module user_pulser_wrapper #(
     f1_count_d    = f1_count_q;
     f2_count_d    = f2_count_q;
     stop_count_d  = stop_count_q;
+    invert_out_d  = invert_out_q;
+    idle_out_d    = idle_out_q;
 
     if (req_q && we_q) begin
       case (reg_addr)
@@ -158,6 +167,10 @@ module user_pulser_wrapper #(
           f2_count_d[pulser_sel]   = wdata_q[15:8];
           stop_count_d[pulser_sel] = wdata_q[23:16];
         end
+        `REG_PULSER_OUT_CTRL: begin
+          invert_out_d[pulser_sel] = wdata_q[N_PULSER_INST-1:0];
+          idle_out_d[pulser_sel]   = wdata_q[2*N_PULSER_INST-1 : N_PULSER_INST];
+        end
         default: ;
       endcase
     end
@@ -168,19 +181,21 @@ module user_pulser_wrapper #(
   //-----------------------------------------------------------------------------------------------
   for (genvar ii = 0; ii < N_PULSER_INST; ii++) begin : gen_pulsers
     user_pulser i_pulser (
-      .clk_i        (clk_i),
-      .rst_ni       (rst_ni),
-      .start_i      (start_pulse[ii]),
-      .stop_i       (stop_pulse[ii]),
-      .f1_cnt_i     (f1_count_q[ii]),
-      .f2_cnt_i     (f2_count_q[ii]),
-      .stop_cnt_i   (stop_count_q[ii]),
-      .f1_end_i     (f1_end_q[ii]),
-      .f1_switch_i  (f1_switch_q[ii]),
-      .f2_end_i     (f2_end_q[ii]),
-      .f2_switch_i  (f2_switch_q[ii]),
-      .pulse_o      (pulse_o[ii]),
-      .state_o      (state[ii])
+      .clk_i          (clk_i),
+      .rst_ni         (rst_ni),
+      .start_i        (start_pulse[ii]),
+      .stop_i         (stop_pulse[ii]),
+      .f1_cnt_i       (f1_count_q[ii]),
+      .f2_cnt_i       (f2_count_q[ii]),
+      .stop_cnt_i     (stop_count_q[ii]),
+      .f1_end_i       (f1_end_q[ii]),
+      .f1_switch_i    (f1_switch_q[ii]),
+      .f2_end_i       (f2_end_q[ii]),
+      .f2_switch_i    (f2_switch_q[ii]),
+      .invert_out_i   (invert_out_q[ii]),
+      .idle_out_i     (idle_out_q[ii]),
+      .pulse_o        (pulse_o[ii]),
+      .state_o        (state[ii])
     );
   end
 

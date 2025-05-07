@@ -21,6 +21,8 @@ module user_pulser (
   input  logic [15:0] f1_switch_i,
   input  logic [15:0] f2_end_i,
   input  logic [15:0] f2_switch_i,
+  input  logic        invert_out_i,
+  input  logic        idle_out_i,
 
   output logic        pulse_o,
   output logic [2:0]  state_o
@@ -179,19 +181,27 @@ module user_pulser (
 
   // Pulse output logic
   always_comb begin
-    pulse_o = 1'd0;
+    pulse_o = idle_out_i;
 
     case (state_q)
       RUN_F1, RUN_F2: begin
         if (state_d != RUN_STOP && state_d != DONE) begin
-          pulse_o = clk_count < current_switch;
+          if (invert_out_i == 1'b1) begin
+            pulse_o = ~(clk_count < current_switch);
+          end else begin
+            pulse_o = clk_count < current_switch;
+          end
         end
       end
       RUN_STOP: begin
-        pulse_o = ~(clk_count < current_switch);
+        if (invert_out_i == 1'b1) begin
+          pulse_o = clk_count < current_switch;
+        end else begin
+          pulse_o = ~(clk_count < current_switch);
+        end
       end
       default: begin
-        pulse_o = '0;
+        pulse_o = idle_out_i;
       end
     endcase
   end

@@ -9,14 +9,24 @@
 #include "config.h"
 #include "user_pulser.h"
 
-// TODO: Check read functions (start, stop are wrong)
+// TODO: Check read functions (start, stop might be wrong)
 
-// Function to initialize the pulser (can be expanded for actual hardware initialization)
+// Function to initialize the pulser
 void pulser_set_values(pulser_id_t id, const pulser_settings_t *settings)
 {
     pulser_set_f1_end_switch(id, settings->f1_end, settings->f1_switch);
     pulser_set_f2_end_switch(id, settings->f2_end, settings->f2_switch);
     pulser_set_f1_f2_stop_count(id, settings->f1_count, settings->f2_count, settings->stop_count);
+}
+
+// Function to configure pulser (output, pulsing numbers)
+void pulser_config(pulser_id_t id, const pulser_settings_t *settings)
+{
+    pulser_set_values(id, settings);
+
+    int val = (settings->invert_out & 0xF) |
+              ((settings->idle_high << 4) & 0xF0);
+    pulser_write(id, REG_PULSER_OUT_CTRL, val);
 }
 
 // Function to start the pulser

@@ -33,6 +33,8 @@ int main()
     pulser0_settings.f1_count = 8;
     pulser0_settings.f2_count = 5;
     pulser0_settings.stop_count = 2;
+    pulser0_settings.invert_out = 0;
+    pulser0_settings.idle_high = 0;
 
     pulser_settings_t pulser1_settings;
     pulser1_settings.f1_end = 8;
@@ -42,6 +44,8 @@ int main()
     pulser1_settings.f1_count = 1;
     pulser1_settings.f2_count = 9;
     pulser1_settings.stop_count = 3;
+    pulser1_settings.invert_out = 0;
+    pulser1_settings.idle_high = 0;
 
     pulser_settings_t pulser2_settings;
     pulser2_settings.f1_end = 9;
@@ -51,6 +55,8 @@ int main()
     pulser2_settings.f1_count = 2;
     pulser2_settings.f2_count = 4;
     pulser2_settings.stop_count = 6;
+    pulser2_settings.invert_out = 0;
+    pulser2_settings.idle_high = 0;
 
     pulser_settings_t pulser3_settings;
     pulser3_settings.f1_end = 6;
@@ -60,11 +66,13 @@ int main()
     pulser3_settings.f1_count = 7;
     pulser3_settings.f2_count = 1;
     pulser3_settings.stop_count = 9;
+    pulser3_settings.invert_out = 0;
+    pulser3_settings.idle_high = 0;
 
-    pulser_set_values(PULSER_0, &pulser0_settings);
-    pulser_set_values(PULSER_1, &pulser1_settings);
-    pulser_set_values(PULSER_2, &pulser2_settings);
-    pulser_set_values(PULSER_3, &pulser3_settings);
+    pulser_config(PULSER_0, &pulser0_settings);
+    pulser_config(PULSER_1, &pulser1_settings);
+    pulser_config(PULSER_2, &pulser2_settings);
+    pulser_config(PULSER_3, &pulser3_settings);
 
     // Test Pulser 0
 
