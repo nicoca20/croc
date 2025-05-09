@@ -55,18 +55,11 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
   sbr_obi_req_t adv_timer_obi_req;
   sbr_obi_rsp_t adv_timer_obi_rsp;
 
-  // Pulser Subordinate Bus
-  sbr_obi_req_t user_pulser_obi_req;
-  sbr_obi_rsp_t user_pulser_obi_rsp;
-
   // Fanout into more readable signals
   // assign user_error_obi_req              = all_user_sbr_obi_req[UserError];
   // assign all_user_sbr_obi_rsp[UserError] = user_error_obi_rsp;
   assign adv_timer_obi_req           = all_user_sbr_obi_req[UserAdvTimer];
   assign all_user_sbr_obi_rsp[UserAdvTimer] = adv_timer_obi_rsp;
-  assign user_pulser_obi_req           = all_user_sbr_obi_req[UserPulser];
-  assign all_user_sbr_obi_rsp[UserPulser] = user_pulser_obi_rsp;
-
 
   //-----------------------------------------------------------------------------------------------
   // Demultiplex to User Subordinates according to address map
@@ -179,21 +172,6 @@ module user_domain import user_pkg::*; import croc_pkg::*; #(
     .ch_1_o           (                   ),
     .ch_2_o           (                   ),
     .ch_3_o           (                   )
-  );
-
-  // Pulser Subordinate
-    user_pulser_wrapper #(
-    .ObiCfg                 ( SbrObiCfg     ),
-    .obi_req_t              ( sbr_obi_req_t ),
-    .obi_rsp_t              ( sbr_obi_rsp_t ),
-    .N_PULSER_INST          ( 4             ),
-    .PULSER_SEL_ADDR_WIDTH  ( 2             )
-    ) i_user_pulser (
-    .clk_i        ( clk_i               ),
-    .rst_ni       ( rst_ni              ),
-    .obi_req_i    ( user_pulser_obi_req ),
-    .obi_rsp_o    ( user_pulser_obi_rsp ),
-    .pulse_o      (  )
   );
 
 endmodule

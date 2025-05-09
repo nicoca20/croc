@@ -7,7 +7,7 @@
 
 #include "util.h"
 #include "config.h"
-#include "user_pulser.h"
+#include "pulser.h"
 
 // TODO: Check read functions (start, stop might be wrong)
 
@@ -32,13 +32,13 @@ void pulser_config(pulser_id_t id, const pulser_settings_t *settings)
 // Function to start the pulser
 void pulser_start(int pulser_to_start)
 {
-    *reg32(USER_PULSER_BASE_ADDR, PULSER_CTRL_REG) = pulser_to_start & 0b1111;
+    *reg32(PULSER_BASE_ADDR, PULSER_CTRL_REG) = pulser_to_start & 0b1111;
 }
 
 // Function to stop the pulser
 void pulser_stop(int pulser_to_stop)
 {
-    *reg32(USER_PULSER_BASE_ADDR, PULSER_CTRL_REG) = (pulser_to_stop & 0b1111) << 4;
+    *reg32(PULSER_BASE_ADDR, PULSER_CTRL_REG) = (pulser_to_stop & 0b1111) << 4;
 }
 
 // Setters for each of the pulser parameters
@@ -112,10 +112,10 @@ state_pulser_t get_pulser_fsm_state(pulser_id_t id)
 
 static inline void pulser_write(pulser_id_t id, int reg_offset, int value)
 {
-    *reg32(USER_PULSER_BASE_ADDR + (id * PULSER_OFFSET_PER_ID), reg_offset) = value;
+    *reg32(PULSER_BASE_ADDR + (id * PULSER_OFFSET_PER_ID), reg_offset) = value;
 }
 
 static inline int pulser_read(pulser_id_t id, int reg_offset)
 {
-    return *reg32(USER_PULSER_BASE_ADDR + (id * PULSER_OFFSET_PER_ID), reg_offset);
+    return *reg32(PULSER_BASE_ADDR + (id * PULSER_OFFSET_PER_ID), reg_offset);
 }

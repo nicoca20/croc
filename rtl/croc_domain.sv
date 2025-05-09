@@ -4,6 +4,7 @@
 //
 // Authors:
 // - Philippe Sauter <phsauter@iis.ee.ethz.ch>
+// - Nico Canzani <ncanzani@student.ethz.ch>
 
 module croc_domain import croc_pkg::*; #(
   parameter int unsigned GpioCount = 16
@@ -156,6 +157,10 @@ module croc_domain import croc_pkg::*; #(
   // Timer periph bus
   sbr_obi_req_t timer_obi_req;
   sbr_obi_rsp_t timer_obi_rsp;
+
+  // Pulser periph Bus
+  sbr_obi_req_t pulser_obi_req;
+  sbr_obi_rsp_t pulser_obi_rsp;
   
   // Fanout to individual peripherals
   assign error_obi_req                     = all_periph_obi_req[PeriphError];
@@ -170,6 +175,8 @@ module croc_domain import croc_pkg::*; #(
   assign all_periph_obi_rsp[PeriphGpio]    = gpio_obi_rsp;
   assign timer_obi_req                     = all_periph_obi_req[PeriphTimer];
   assign all_periph_obi_rsp[PeriphTimer]   = timer_obi_rsp;
+  assign pulser_obi_req                    = all_periph_obi_req[PeriphPulser];
+  assign all_periph_obi_rsp[PeriphPulser]  = pulser_obi_rsp;
 
 
   // -----------------
@@ -594,5 +601,20 @@ module croc_domain import croc_pkg::*; #(
   );
   assign timer_obi_rsp.r.err        = 1'b0;
   assign timer_obi_rsp.r.r_optional = 1'b0;
+
+  // Pulser Subordinate
+    pulser_wrapper #(
+    .ObiCfg                 ( SbrObiCfg     ),
+    .obi_req_t              ( sbr_obi_req_t ),
+    .obi_rsp_t              ( sbr_obi_rsp_t ),
+    .N_PULSER_INST          ( 4             ),
+    .PULSER_SEL_ADDR_WIDTH  ( 2             )
+    ) i_pulser (
+    .clk_i        ( clk_i               ),
+    .rst_ni       ( rst_ni              ),
+    .obi_req_i    ( pulser_obi_req ),
+    .obi_rsp_o    ( pulser_obi_rsp ),
+    .pulse_o      (  )
+  );
 
 endmodule

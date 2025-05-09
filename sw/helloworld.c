@@ -12,7 +12,7 @@
 #include "gpio.h"
 #include "util.h"
 #include "adv_timer.h"
-#include "user_pulser.h"
+#include "pulser.h"
 
 #define PULSER_TO_TEST PULSER_0
 

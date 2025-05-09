@@ -6,6 +6,7 @@ package:
   name: croc_soc
   authors:
     - "Philippe Sauter <phsauter@iis.ee.ethz.ch>"
+    - "Nico Canzani <ncanzani@student.ethz.ch>"
 
 dependencies:
   # IMPORTANT: see vendor_package at the bottom
@@ -20,6 +21,7 @@ dependencies:
   obi_peripherals:      { git: "https://github.com/pulp-platform/obi_peripherals.git",      rev: 21ee04d    } # UART
   apb_uart:             { git: "https://github.com/pulp-platform/apb_uart.git",             version: 0.2.1  }
   apb_adv_timer:        { git: "https://github.com/nicoca20/apb_adv_timer.git",             rev: develop  }
+  pulser:               { git: "https://github.com/nicoca20/pulser.git",                    rev: feature/testbench }
   cve2:                 { path: "rtl/cve2" } # a vendor package (no Bender.yml), see below 
 
 
@@ -50,8 +52,6 @@ sources:
       # add your design files with modules here
       # Level 3
       - rtl/croc_soc.sv
-      - rtl/user_domain/user_pulser_wrapper.sv
-      - rtl/user_domain/user_pulser.sv
 
   - target: not(fpga)
     files:
@@ -182,6 +182,14 @@ vendor_package:
     target_dir: rtl/apb_adv_timer
     upstream: { git: "https://github.com/nicoca20/apb_adv_timer.git", rev: "a71ae61e6f55cbe49a2246b7c7b3317c700711b0"  } # working state, change to a tag at some point
     patch_dir: "rtl/patches/apb_adv_timer"
+    mapping:
+      - { from: 'rtl/',        to: '',            patch_dir: 'rtl/' }
+      - { from: 'Bender.yml',  to: 'Bender.yml',  patch_dir: '' }
+
+  - name: pulser
+    target_dir: rtl/pulser
+    upstream: { git: "https://github.com/nicoca20/pulser.git", rev: "2736653e5b72491a207b913071c488e5b7bd7bfd"  } # working state, change to a tag at some point
+    patch_dir: "rtl/patches/pulser"
     mapping:
       - { from: 'rtl/',        to: '',            patch_dir: 'rtl/' }
       - { from: 'Bender.yml',  to: 'Bender.yml',  patch_dir: '' }

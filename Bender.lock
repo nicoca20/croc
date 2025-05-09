@@ -57,6 +57,13 @@ packages:
     dependencies:
     - common_cells
     - obi
+  pulser:
+    revision: null
+    version: null
+    source:
+      Git: https://github.com/nicoca20/pulser.git
+    dependencies:
+    - common_cells
   register_interface:
     revision: null
     version: null
