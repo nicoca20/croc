@@ -1,10 +1,37 @@
 //-----------------------------------------------------------------------------------------------
+// File        : user_pulser_wrapper.sv
+// Author      : Nico Canzani <ncanzani@student.ethz.ch>
+// Description : Top-Level Wrapper for Multiple Pulse Generators
+//
+// This module integrates multiple instances of the `user_pulser` module and exposes a unified
+// register interface over the OBI (Open Bus Interface) protocol.
+//
+// Key Features:
+//   - Parameterizable number of pulser instances (`N_PULSER_INST`)
+//   - Register-mapped control and configuration interface per pulser
+//   - Instance selection and register decode via address bits
+//   - Synchronous OBI protocol handshake handling (req, gnt, rvalid, etc.)
+//   - Centralized command register for starting/stopping multiple pulsers simultaneously
+//
+// REGISTER MAP (per instance, offset by upper address bits):
+//   - 0x00 : CMD         → Start/Stop pulses (bit-encoded per instance)
+//   - 0x04 : F1_CFG      → {f1_end, f1_switch}
+//   - 0x08 : F2_CFG      → {f2_end, f2_switch}
+//   - 0x0C : COUNT_CFG   → {stop_count, f2_count, f1_count}
+//   - 0x10 : STATUS      → {ready, state}
+//   - 0x14 : OUT_CTRL    → {idle_out, invert_out}
+//
+// Each pulser is independently configurable and drives its own `pulse_o` output.
+// The wrapper tracks FSM states and readiness status from each instance,
+// and handles proper decoding, storage, and routing of configuration data.
+//
+// Dependencies:
+//   - `user_pulser.sv` (pulser logic)
+//   - `common_cells/registers.svh` (flip-flop and register macros)
+//
 // Copyright 2025 ETH Zurich and University of Bologna.
 // Solderpad Hardware License, Version 0.51, see LICENSE for details.
 // SPDX-License-Identifier: SHL-0.51
-//
-// Authors:
-// - Nico Canzani <ncanzani@student.ethz.ch>
 //-----------------------------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------------------------
