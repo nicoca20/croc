@@ -24,8 +24,8 @@ void pulser_config(pulser_id_t id, const pulser_settings_t *settings)
 {
     pulser_set_values(id, settings);
 
-    int val = (settings->invert_out & 0xF) |
-              ((settings->idle_high << 4) & 0xF0);
+    int val = (settings->invert_out & 0x1) |
+              ((settings->idle_high << 1) & 0x2);
     pulser_write(id, REG_PULSER_OUT_CTRL, val);
 }
 
