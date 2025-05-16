@@ -161,6 +161,10 @@ module croc_domain import croc_pkg::*; #(
   // Pulser periph Bus
   sbr_obi_req_t pulser_obi_req;
   sbr_obi_rsp_t pulser_obi_rsp;
+
+  // AdvTimer periph Bus
+  sbr_obi_req_t adv_timer_obi_req;
+  sbr_obi_rsp_t adv_timer_obi_rsp;
   
   // Fanout to individual peripherals
   assign error_obi_req                     = all_periph_obi_req[PeriphError];
@@ -177,6 +181,8 @@ module croc_domain import croc_pkg::*; #(
   assign all_periph_obi_rsp[PeriphTimer]   = timer_obi_rsp;
   assign pulser_obi_req                    = all_periph_obi_req[PeriphPulser];
   assign all_periph_obi_rsp[PeriphPulser]  = pulser_obi_rsp;
+  assign adv_timer_obi_req                 = all_periph_obi_req[PeriphAdvTimer];
+  assign all_periph_obi_rsp[PeriphAdvTimer]= adv_timer_obi_rsp;
 
 
   // -----------------
@@ -615,6 +621,59 @@ module croc_domain import croc_pkg::*; #(
     .obi_req_i    ( pulser_obi_req ),
     .obi_rsp_o    ( pulser_obi_rsp ),
     .pulse_o      (  )
+  );
+
+  // adv_timer Subordinate
+  reg_req_t adv_timer_reg_req;
+  reg_rsp_t adv_timer_reg_rsp;
+
+  periph_to_reg #(
+    .AW    ( SbrObiCfg.AddrWidth  ),
+    .DW    ( SbrObiCfg.DataWidth  ),
+    .BW    ( 8                    ),
+    .IW    ( SbrObiCfg.IdWidth    ),
+    .req_t ( reg_req_t            ),
+    .rsp_t ( reg_rsp_t            )
+  ) i_adv_timer_translate (
+    .clk_i     ( clk_i                      ),
+    .rst_ni    ( rst_ni                     ),
+
+    .req_i     ( adv_timer_obi_req.req      ),
+    .add_i     ( adv_timer_obi_req.a.addr   ),
+    .wen_i     ( ~adv_timer_obi_req.a.we    ),
+    .wdata_i   ( adv_timer_obi_req.a.wdata  ),
+    .be_i      ( adv_timer_obi_req.a.be     ),
+    .id_i      ( adv_timer_obi_req.a.aid    ),
+
+    .gnt_o     ( adv_timer_obi_rsp.gnt      ),
+    .r_rdata_o ( adv_timer_obi_rsp.r.rdata  ),
+    .r_opc_o   ( adv_timer_obi_rsp.r.err    ),
+    .r_id_o    ( adv_timer_obi_rsp.r.rid    ),
+    .r_valid_o ( adv_timer_obi_rsp.rvalid   ),
+
+    .reg_req_o ( adv_timer_reg_req          ),
+    .reg_rsp_i ( adv_timer_reg_rsp          )
+  );
+
+  reg_adv_timer_wrap #(
+    .AddrWidth        ( 32          ),
+    .reg_req_t        ( reg_req_t   ),
+    .reg_rsp_t        ( reg_rsp_t   )
+  ) i_adv_timer_wrap (
+    .clk_i            ( clk_i             ),
+    .rst_ni           ( rst_ni            ),
+
+    .reg_req_i        ( adv_timer_reg_req ),
+    .reg_rsp_o        ( adv_timer_reg_rsp ),
+
+    .dft_cg_enable_i  ( 1'b0              ),
+    .low_speed_clk_i  ( ref_clk_i         ),
+    .ext_sig_i        (                   ),
+    .events_o         (                   ),
+    .ch_0_o           (                   ),
+    .ch_1_o           (                   ),
+    .ch_2_o           (                   ),
+    .ch_3_o           (                   )
   );
 
 endmodule
