@@ -74,15 +74,15 @@ int main()
     pulser_config(PULSER_2, &pulser2_settings);
     pulser_config(PULSER_3, &pulser3_settings);
 
-    // Test Pulser 0
+    // // Test Pulser 0
 
-    pulser_start(1 << PULSER_0);
-    pulser_stop(1 << PULSER_0);
-    for (int i = 0; i < 2; i++)
-    {
-        __asm__ volatile("nop");
-    }
-    pulser_start(1 << PULSER_0);
+    // pulser_start(1 << PULSER_0);
+    // pulser_stop(1 << PULSER_0);
+    // for (int i = 0; i < 2; i++)
+    // {
+    //     __asm__ volatile("nop");
+    // }
+    // pulser_start(1 << PULSER_0);
 
     // Test Pulser 1
 
@@ -149,9 +149,10 @@ int main()
     // uart_write_flush();
 
     // Read Signature from ROM
-    for (int i=0; i < 3; i++){
-       printf("Rom data: %x\n", *reg32(USER_ROM_BASE_ADDR, i*4));
-       uart_write_flush();
+    for (int i = 0; i < 3; i++)
+    {
+        printf("Rom data: %x\n", *reg32(USER_ROM_BASE_ADDR, i * 4));
+        uart_write_flush();
     }
 
     return 1;
