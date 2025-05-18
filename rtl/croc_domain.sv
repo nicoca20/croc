@@ -609,12 +609,13 @@ module croc_domain import croc_pkg::*; #(
   assign timer_obi_rsp.r.r_optional = 1'b0;
 
   // Pulser Subordinate
-    pulser_wrapper #(
+    pulser #(
     .ObiCfg                 ( SbrObiCfg     ),
     .obi_req_t              ( sbr_obi_req_t ),
     .obi_rsp_t              ( sbr_obi_rsp_t ),
-    .N_PULSER_INST          ( 4             ),
-    .PULSER_SEL_ADDR_WIDTH  ( 2             )
+    .reg_req_t              ( reg_req_t     ),
+    .reg_rsp_t              ( reg_rsp_t     ),
+    .N_PULSER_INST          ( 4             )
     ) i_pulser (
     .clk_i        ( clk_i               ),
     .rst_ni       ( rst_ni              ),
