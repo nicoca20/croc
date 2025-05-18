@@ -21,13 +21,13 @@ static inline int pulser_read(pulser_id_t id, int reg_offset)
 
 uint32_t bitfield_get_field32(bitfield_field32_t field, uint32_t reg)
 {
-    return (reg & field.mask) >> field.index;
+    return (reg >> field.index) & field.mask;
 }
 
 uint32_t bitfield_set_field32(bitfield_field32_t field, uint32_t reg, uint32_t value)
 {
-    reg &= ~field.mask;
-    reg |= (value << field.index) & field.mask;
+    reg &= ~(field.mask << field.index);
+    reg |= ((value & field.mask) << field.index);
     return reg;
 }
 
