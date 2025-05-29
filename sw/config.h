@@ -26,3 +26,12 @@
 #define UART_BYTE_ALIGN 4
 #define UART_FREQ TB_FREQUENCY
 #define UART_BAUD TB_BAUDRATE
+
+// Since SRAM is very limmited, select which part to compile and test.
+// Difficult to impossible to activate more than one test
+#define TEST_READ_ROM           0
+#define TEST_REG_PART_F1        0
+#define TEST_REG_PART_F2        0
+#define TEST_REG_PART_CNT       0
+#define TEST_RUN_ALL_PULSERS    1
+#define TEST_RUN_ADV_TIMER      0
