@@ -656,6 +656,10 @@ module croc_domain import croc_pkg::*; #(
     .reg_rsp_i ( adv_timer_reg_rsp          )
   );
 
+  // Set unused wire to avoid any "Wire has no driver" warnings
+  assign adv_timer_obi_rsp.r.r_optional = 1'b0;
+
+
   reg_adv_timer_wrap #(
     .AddrWidth        ( 32          ),
     .reg_req_t        ( reg_req_t   ),
