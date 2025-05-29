@@ -32,7 +32,8 @@ package user_pkg;
 
   // Enum for bus indices
   typedef enum int {
-    UserRom = 0
+    UserError = 0,
+    UserRom = 1
   } user_demux_outputs_e;
 
   // Address rules given to address decoder
