@@ -65,6 +65,9 @@ extern "C"
 
     void pulser_set_values(pulser_id_t id, const pulser_settings_t *settings);
     void pulser_config(pulser_id_t id, const pulser_settings_t *settings);
+    void pulser_en(int pulser_to_en);
+    void pulser_dis(int pulser_to_dis);
+    void pulser_disable_all_after_done(void);
     void pulser_start(int pulser_to_start);
     void pulser_stop(int pulser_to_stop);
 

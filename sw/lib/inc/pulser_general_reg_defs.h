@@ -28,6 +28,13 @@ extern "C" {
 #define PULSER_GENERAL_CTRL_STOP_FIELD \
   ((bitfield_field32_t) { .mask = PULSER_GENERAL_CTRL_STOP_MASK, .index = PULSER_GENERAL_CTRL_STOP_OFFSET })
 
+// Set global configs of Pulsers. Currently only enable is active
+#define PULSER_GENERAL_CFG_REG_OFFSET 0x4
+#define PULSER_GENERAL_CFG_EN_MASK 0xffff
+#define PULSER_GENERAL_CFG_EN_OFFSET 0
+#define PULSER_GENERAL_CFG_EN_FIELD \
+  ((bitfield_field32_t) { .mask = PULSER_GENERAL_CFG_EN_MASK, .index = PULSER_GENERAL_CFG_EN_OFFSET })
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif

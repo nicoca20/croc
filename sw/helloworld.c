@@ -73,6 +73,13 @@ int main()
     pulser_config(PULSER_1, &pulser1_settings);
     pulser_config(PULSER_2, &pulser2_settings);
     pulser_config(PULSER_3, &pulser3_settings);
+    for (int i = 0; i < 10; i++)
+    {
+        __asm__ volatile("nop");
+    }
+
+    // Enable Pulsers
+    pulser_en((1 << PULSER_0) | (1 << PULSER_2) | (1 << PULSER_3));
 
     // Test Pulser 0
 
@@ -86,39 +93,39 @@ int main()
 
     // Test Pulser 1
 
-    // pulser_start(1 << PULSER_1);
-    // pulser_stop(1 << PULSER_1);
-    // for (int i = 0; i < 2; i++)
-    // {
-    //     __asm__ volatile("nop");
-    // }
-    // pulser_start(1 << PULSER_1);
+    pulser_start(1 << PULSER_1);
+    pulser_stop(1 << PULSER_1);
+    for (int i = 0; i < 2; i++)
+    {
+        __asm__ volatile("nop");
+    }
+    pulser_start(1 << PULSER_1);
 
-    // // Test Pulser 2
+    // Test Pulser 2
 
-    // pulser_start(1 << PULSER_2);
-    // pulser_stop(1 << PULSER_2);
-    // for (int i = 0; i < 2; i++)
-    // {
-    //     __asm__ volatile("nop");
-    // }
-    // pulser_start(1 << PULSER_2);
+    pulser_start(1 << PULSER_2);
+    pulser_stop(1 << PULSER_2);
+    for (int i = 0; i < 2; i++)
+    {
+        __asm__ volatile("nop");
+    }
+    pulser_start(1 << PULSER_2);
 
-    // // Test Pulser 3
+    // Test Pulser 3
 
-    // pulser_start(1 << PULSER_3);
-    // pulser_stop(1 << PULSER_3);
-    // for (int i = 0; i < 2; i++)
-    // {
-    //     __asm__ volatile("nop");
-    // }
-    // pulser_start(1 << PULSER_3);
+    pulser_start(1 << PULSER_3);
+    pulser_stop(1 << PULSER_3);
+    for (int i = 0; i < 2; i++)
+    {
+        __asm__ volatile("nop");
+    }
+    pulser_start(1 << PULSER_3);
 
-    // // Test All pulsers at same time
-    // for (int i = 0; i < 50; i++)
-    // {
-    //     __asm__ volatile("nop");
-    // }
+    // Test All pulsers at same time
+    for (int i = 0; i < 50; i++)
+    {
+        __asm__ volatile("nop");
+    }
 
     pulser_start((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
     pulser_stop((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
@@ -127,6 +134,8 @@ int main()
         __asm__ volatile("nop");
     }
     pulser_start((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+
+    pulser_disable_all_after_done();
 
     // // Check pulser reading functions
     // // printf("Pulser state fsm: 0x%x\n", get_pulser_fsm_state(PULSER_TO_TEST));

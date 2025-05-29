@@ -84,6 +84,26 @@ void pulser_config(pulser_id_t id, const pulser_settings_t *settings)
     pulser_write(id, PULSER_CORE_CTRL_OUT_REG_OFFSET, reg);
 }
 
+// Enable the pulser by writing to config register
+void pulser_en(int pulser_to_en)
+{
+    uint32_t offset_pulsers = PULSER_OFFSET_PER_ID * N_PULSERS;
+    volatile uint32_t *cfg_reg = (volatile uint32_t *)(PULSER_BASE_ADDR + offset_pulsers + PULSER_GENERAL_CFG_REG_OFFSET);
+
+    uint32_t regval = *cfg_reg;
+    *cfg_reg = regval | (pulser_to_en << PULSER_GENERAL_CFG_EN_OFFSET);
+}
+
+// Disable the pulser by writing to config register
+void pulser_dis(int pulser_to_dis)
+{
+    uint32_t offset_pulsers = PULSER_OFFSET_PER_ID * N_PULSERS;
+    volatile uint32_t *cfg_reg = (volatile uint32_t *)(PULSER_BASE_ADDR + offset_pulsers + PULSER_GENERAL_CFG_REG_OFFSET);
+
+    uint32_t regval = *cfg_reg;
+    *cfg_reg = regval & ~(pulser_to_dis << PULSER_GENERAL_CFG_EN_OFFSET);
+}
+
 // Start the pulser by writing to control register
 void pulser_start(int pulser_to_start)
 {
@@ -98,6 +118,14 @@ void pulser_stop(int pulser_to_stop)
     uint32_t offset_pulsers = PULSER_OFFSET_PER_ID * N_PULSERS;
     volatile uint32_t *ctrl_reg = (volatile uint32_t *)(PULSER_BASE_ADDR + offset_pulsers + PULSER_GENERAL_CTRL_REG_OFFSET);
     *ctrl_reg = ((uint32_t)(pulser_to_stop & PULSER_GENERAL_CTRL_STOP_MASK)) << PULSER_GENERAL_CTRL_STOP_OFFSET;
+}
+
+void pulser_disable_all_after_done(void)
+{
+    for (int i_pulser = 0; i_pulser < N_PULSERS; ++i_pulser) {
+        while (!pulser_ready(i_pulser)) ;
+        pulser_dis(1 << i_pulser);
+    }
 }
 
 // Reading functions
@@ -139,11 +167,11 @@ int pulser_read_status(pulser_id_t id)
     return (ready_bit | (state << 1));
 }
 
-// int pulser_ready(pulser_id_t id)
-// {
-//     int reg = pulser_read(id, PULSER_CORE_STATUS_REG_OFFSET);
-//     return (reg & (1 << PULSER_CORE_STATUS_READY_BIT)) >> PULSER_CORE_STATUS_READY_BIT;
-// }
+int pulser_ready(pulser_id_t id)
+{
+    int reg = pulser_read(id, PULSER_CORE_STATUS_REG_OFFSET);
+    return (reg & (1 << PULSER_CORE_STATUS_READY_BIT)) >> PULSER_CORE_STATUS_READY_BIT;
+}
 
 // state_pulser_t get_pulser_fsm_state(pulser_id_t id)
 // {
