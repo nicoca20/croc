@@ -152,7 +152,7 @@ package croc_pkg;
     '{ idx: PeriphGpio,     start_addr: GpioAddrOffset,     end_addr: GpioAddrOffset    + GpioAddrRange},    // 4: GPIO
     '{ idx: PeriphTimer,    start_addr: TimerAddrOffset,    end_addr: TimerAddrOffset   + TimerAddrRange},   // 5: Timer
     '{ idx: PeriphPulser,   start_addr: PulserAddrOffset,   end_addr: PulserAddrOffset  + PulserAddrRange},  // 6: Pulser
-    '{ idx: PeriphAdvTimer, start_addr: AdvTimerAddrOffset, end_addr: AdvTimerAddrOffset+ AdvTimerAddrRange} // 6: Advanced Timer
+    '{ idx: PeriphAdvTimer, start_addr: AdvTimerAddrOffset, end_addr: AdvTimerAddrOffset+ AdvTimerAddrRange} // 7: Advanced Timer
   };
 
   // OBI is configured as 32 bit data, 32 bit address width
