@@ -12,6 +12,7 @@ extern "C"
     void test_read_rom(void);
     void test_pulser_regs(pulser_id_t id);
     void test_pulser_run_all(void);
+    void test_pulser_one_by_one(void);
     void test_adv_timer(void);
 
 #ifdef __cplusplus

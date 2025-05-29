@@ -11,8 +11,6 @@
 #include "timer.h"
 #include "gpio.h"
 #include "util.h"
-#include "adv_timer.h"
-#include "pulser.h"
 #include "test_own_rtl.h"
 
 int main()
@@ -34,6 +32,10 @@ int main()
 
 #if TEST_READ_ROM
     test_read_rom();
+#endif
+
+#if TEST_RUN_PULSER_ONE_BY_ONE
+    test_pulser_one_by_one();
 #endif
 
 #if TEST_RUN_ALL_PULSERS
