@@ -130,34 +130,34 @@ void pulser_disable_all_after_done(void)
 
 // Reading functions
 
-// int pulser_read_f1_end(pulser_id_t id)
-// {
-//     int reg = pulser_read(id, PULSER_F1_CFG_REG_OFFSET);
-//     return (int)bitfield_get_field32(PULSER_F1_CFG_ENDVAL_FIELD, (uint32_t)reg);
-// }
+int pulser_read_f1_end(pulser_id_t id)
+{
+    int reg = pulser_read(id, PULSER_CORE_CFG_F1_REG_OFFSET);
+    return (int)bitfield_get_field32(PULSER_CORE_CFG_F1_ENDVAL_FIELD, (uint32_t)reg);
+}
 
-// int pulser_read_f1_switch(pulser_id_t id)
-// {
-//     int reg = pulser_read(id, PULSER_F1_CFG_REG_OFFSET);
-//     return (int)bitfield_get_field32(PULSER_F1_CFG_SWITCHVAL_FIELD, (uint32_t)reg);
-// }
+int pulser_read_f1_switch(pulser_id_t id)
+{
+    int reg = pulser_read(id, PULSER_CORE_CFG_F1_REG_OFFSET);
+    return (int)bitfield_get_field32(PULSER_CORE_CFG_F1_SWITCHVAL_FIELD, (uint32_t)reg);
+}
 
-// int pulser_read_f2_end(pulser_id_t id)
-// {
-//     int reg = pulser_read(id, PULSER_F2_CFG_REG_OFFSET);
-//     return (int)bitfield_get_field32(PULSER_F2_CFG_ENDVAL_FIELD, (uint32_t)reg);
-// }
+int pulser_read_f2_end(pulser_id_t id)
+{
+    int reg = pulser_read(id, PULSER_CORE_CFG_F2_REG_OFFSET);
+    return (int)bitfield_get_field32(PULSER_CORE_CFG_F2_ENDVAL_FIELD, (uint32_t)reg);
+}
 
-// int pulser_read_f2_switch(pulser_id_t id)
-// {
-//     int reg = pulser_read(id, PULSER_F2_CFG_REG_OFFSET);
-//     return (int)bitfield_get_field32(PULSER_F2_CFG_SWITCHVAL_FIELD, (uint32_t)reg);
-// }
+int pulser_read_f2_switch(pulser_id_t id)
+{
+    int reg = pulser_read(id, PULSER_CORE_CFG_F2_REG_OFFSET);
+    return (int)bitfield_get_field32(PULSER_CORE_CFG_F2_SWITCHVAL_FIELD, (uint32_t)reg);
+}
 
-// int pulser_read_count(pulser_id_t id)
-// {
-//     return pulser_read(id, PULSER_COUNT_CFG_REG_OFFSET);
-// }
+int pulser_read_count(pulser_id_t id)
+{
+    return pulser_read(id, PULSER_CORE_CFG_CNT_REG_OFFSET);
+}
 
 int pulser_read_status(pulser_id_t id)
 {
@@ -173,9 +173,9 @@ int pulser_ready(pulser_id_t id)
     return (reg & (1 << PULSER_CORE_STATUS_READY_BIT)) >> PULSER_CORE_STATUS_READY_BIT;
 }
 
-// state_pulser_t get_pulser_fsm_state(pulser_id_t id)
-// {
-//     int reg = pulser_read(id, PULSER_CORE_STATUS_REG_OFFSET);
-//     int state = bitfield_get_field32(PULSER_CORE_STATUS_STATE_FIELD, reg);
-//     return (state_pulser_t)state;
-// }
+state_pulser_t get_pulser_fsm_state(pulser_id_t id)
+{
+    int reg = pulser_read(id, PULSER_CORE_STATUS_REG_OFFSET);
+    int state = bitfield_get_field32(PULSER_CORE_STATUS_STATE_FIELD, reg);
+    return (state_pulser_t)state;
+}
