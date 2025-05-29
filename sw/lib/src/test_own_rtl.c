@@ -172,7 +172,7 @@ void test_pulser_run_all(void) {
     set_testconf();
 
     // Enable Pulsers
-    pulser_en((1 << PULSER_0) | (1 << PULSER_2) | (1 << PULSER_3));
+    pulser_en((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
     pulser_stop((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
 
     pulser_start((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
