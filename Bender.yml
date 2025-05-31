@@ -189,7 +189,7 @@ vendor_package:
 
   - name: pulser
     target_dir: rtl/pulser
-    upstream: { git: "https://github.com/nicoca20/pulser.git", rev: "804be1fd61e11dcb072225f702febb3a47441021"  } # working state, change to a tag at some point
+    upstream: { git: "https://github.com/nicoca20/pulser.git", rev: "1f3aa6e45cff70444149cdb70b63919b664325e2"  } # working state, change to a tag at some point
     patch_dir: "rtl/patches/pulser"
     mapping:
       - { from: 'rtl/',        to: '',            patch_dir: 'rtl/' }
