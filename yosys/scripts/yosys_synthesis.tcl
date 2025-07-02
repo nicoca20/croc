@@ -34,19 +34,19 @@ yosys read_slang --top $top_design -F $sv_flist \
 yosys setattr -set keep_hierarchy 1 "t:croc_soc$*"
 yosys setattr -set keep_hierarchy 1 "t:croc_domain$*"
 yosys setattr -set keep_hierarchy 1 "t:user_domain$*"
-yosys setattr -set keep_hierarchy 1 "t:core_wrap$*"
-yosys setattr -set keep_hierarchy 1 "t:cve2_register_file_ff$*"
-yosys setattr -set keep_hierarchy 1 "t:cve2_cs_registers$*"
+#yosys setattr -set keep_hierarchy 1 "t:core_wrap$*"
+#yosys setattr -set keep_hierarchy 1 "t:cve2_register_file_ff$*"
+#yosys setattr -set keep_hierarchy 1 "t:cve2_cs_registers$*"
 yosys setattr -set keep_hierarchy 1 "t:dmi_jtag$*"
 yosys setattr -set keep_hierarchy 1 "t:dm_top$*"
 yosys setattr -set keep_hierarchy 1 "t:gpio$*"
-yosys setattr -set keep_hierarchy 1 "t:timer_unit$*"
-yosys setattr -set keep_hierarchy 1 "t:reg_uart_wrap$*"
-yosys setattr -set keep_hierarchy 1 "t:soc_ctrl_reg_top$*"
+#yosys setattr -set keep_hierarchy 1 "t:timer_unit$*"
+#yosys setattr -set keep_hierarchy 1 "t:reg_uart_wrap$*"
+#yosys setattr -set keep_hierarchy 1 "t:soc_ctrl_reg_top$*"
 yosys setattr -set keep_hierarchy 1 "t:tc_clk*$*"
 yosys setattr -set keep_hierarchy 1 "t:tc_sram_impl$*"
 yosys setattr -set keep_hierarchy 1 "t:cdc_*$*"
-yosys setattr -set keep_hierarchy 1 "t:sync$*"
+#yosys setattr -set keep_hierarchy 1 "t:sync$*"
 
 
 # blackbox modules (applies the *blackbox* attribute)
@@ -134,7 +134,7 @@ yosys dfflibmap {*}$tech_cells_args
 
 # then perform bit-level optimization and mapping on all combinational clouds in ABC
 # target period (per optimized block/module) in picoseconds
-set period_ps 10000
+set period_ps 8000
 # pre-process abc file (written to tmp directory)
 set abc_comb_script   [processAbcScript scripts/abc-opt.script]
 # call ABC
