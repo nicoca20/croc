@@ -43,8 +43,10 @@ $(NETLIST) $(NETLIST_DEBUG):  $(SV_FLIST)
 		2>&1 | TZ=UTC gawk '{ print strftime("[%Y-%m-%d %H:%M %Z]"), $$0 }' \
 		     | tee "$(YOSYS_DIR)/$(TOP_DESIGN).log" \
 		     | gawk -f $(YOSYS_DIR)/scripts/filter_output.awk;
-		
 
+	echo "[INFO] Running STA..." && \
+	sta $(YOSYS_DIR)/scripts/opensta.tcl 
+	
 ys_clean:
 	rm -rf $(YOSYS_OUT)
 	rm -rf $(YOSYS_TMP)

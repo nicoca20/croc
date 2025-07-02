@@ -46,6 +46,7 @@ set padW     80; # pad width (beachfront)
 set chipH  2017; # left/right (height)
 set chipW  2017; # top/bottom (width)
 
+# !!! IMPORTANT !!!! => This pin placement (WEST) must stay as given
 #Edge: LEFT (top to bottom)
 set numPads 16
 set offset 20
@@ -69,7 +70,7 @@ place_pad -row IO_WEST  -location [expr $start - 13*$pitch] "pad_jtag_tdo_o"   ;
 place_pad -row IO_WEST  -location [expr $start - 14*$pitch] "pad_vss0"         ; # pin no: 15
 place_pad -row IO_WEST  -location [expr $start - 15*$pitch] "pad_vdd0"         ; # pin no: 16
 
-
+# !!! IMPORTANT !!!! => pin placement of following pins can be changed except of vssiox/vddiox and vssx/vddx
 #Edge: BOTTOM (left to right)
 set numPads 16
 set offset 20
