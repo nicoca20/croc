@@ -47,6 +47,12 @@ yosys setattr -set keep_hierarchy 1 "t:tc_clk*$*"
 yosys setattr -set keep_hierarchy 1 "t:tc_sram_impl$*"
 yosys setattr -set keep_hierarchy 1 "t:cdc_*$*"
 #yosys setattr -set keep_hierarchy 1 "t:sync$*"
+yosys setattr -set keep_hierarchy 1 "t:pulser$*"
+yosys setattr -set keep_hierarchy 1 "t:pulser_core$*"
+yosys setattr -set keep_hierarchy 1 "t:pulser_core_reg_top$*"
+yosys setattr -set keep_hierarchy 1 "t:pulser_general_reg_top$*"
+yosys setattr -set keep_hierarchy 1 "t:periph_to_reg$*"
+yosys setattr -set keep_hierarchy 1 "t:reg_adv_timer_wrap$*"
 
 
 # blackbox modules (applies the *blackbox* attribute)
