@@ -22,6 +22,20 @@ module croc_chip import croc_pkg::*; #() (
   input  wire fetch_en_i,
   output wire status_o,
 
+  output wire pulse0_o,
+  output wire pulse1_o,
+  output wire pulse2_o,
+  output wire pulse3_o,
+  output wire pulse4_o,
+  output wire pulse5_o,
+  output wire pulse6_o,
+  output wire pulse7_o,
+
+  output wire adv_timer0_ch0,
+  output wire adv_timer0_ch1,
+  output wire adv_timer0_ch2,
+  output wire adv_timer0_ch3,
+
   inout  wire gpio0_io,
   inout  wire gpio1_io,
   inout  wire gpio2_io,
@@ -42,18 +56,7 @@ module croc_chip import croc_pkg::*; #() (
   inout  wire gpio17_io,
   inout  wire gpio18_io,
   inout  wire gpio19_io,
-  inout  wire gpio20_io,
-  inout  wire gpio21_io,
-  inout  wire gpio22_io,
-  inout  wire gpio23_io,
-  inout  wire gpio24_io,
-  inout  wire gpio25_io,
-  inout  wire gpio26_io,
-  inout  wire gpio27_io,
-  inout  wire gpio28_io,
-  inout  wire gpio29_io,
-  inout  wire gpio30_io,
-  inout  wire gpio31_io,
+
   output wire unused0_o,
   output wire unused1_o,
   output wire unused2_o,
@@ -73,11 +76,20 @@ module croc_chip import croc_pkg::*; #() (
     logic soc_fetch_en_i;
     logic soc_status_o;
 
-    localparam int unsigned GpioCount = 32;
+    localparam int unsigned GpioCount = 20;
+    localparam int unsigned N_PULSER_INST = 8;
+    localparam int unsigned AdvTimer = 1
 
     logic [GpioCount-1:0] soc_gpio_i;             
     logic [GpioCount-1:0] soc_gpio_o;            
     logic [GpioCount-1:0] soc_gpio_out_en_o; // Output enable signal; 0 -> input, 1 -> output
+
+    logic [N_PULSER_INST-1:0] soc_pulse_o;
+
+    logic [AdvTimer-1:0] soc_ch0_o;
+    logic [AdvTimer-1:0] soc_ch1_o;
+    logic [AdvTimer-1:0] soc_ch2_o;
+    logic [AdvTimer-1:0] soc_ch3_o;
 
     sg13g2_IOPadIn        pad_clk_i        (.pad(clk_i),        .p2c(soc_clk_i));
     sg13g2_IOPadIn        pad_rst_ni       (.pad(rst_ni),       .p2c(soc_rst_ni));
@@ -95,6 +107,20 @@ module croc_chip import croc_pkg::*; #() (
 
     sg13g2_IOPadIn        pad_fetch_en_i   (.pad(fetch_en_i),   .p2c(soc_fetch_en_i));
     sg13g2_IOPadOut16mA   pad_status_o     (.pad(status_o),     .c2p(soc_status_o));
+
+    sg13g2_IOPadOut16mA pad_pulse0_o     (.pad(pulse0_o),     .c2p(soc_pulse_o[0]));
+    sg13g2_IOPadOut16mA pad_pulse1_o     (.pad(pulse1_o),     .c2p(soc_pulse_o[1]));
+    sg13g2_IOPadOut16mA pad_pulse2_o     (.pad(pulse2_o),     .c2p(soc_pulse_o[2]));
+    sg13g2_IOPadOut16mA pad_pulse3_o     (.pad(pulse3_o),     .c2p(soc_pulse_o[3]));
+    sg13g2_IOPadOut16mA pad_pulse4_o     (.pad(pulse4_o),     .c2p(soc_pulse_o[4]));
+    sg13g2_IOPadOut16mA pad_pulse5_o     (.pad(pulse5_o),     .c2p(soc_pulse_o[5]));
+    sg13g2_IOPadOut16mA pad_pulse6_o     (.pad(pulse6_o),     .c2p(soc_pulse_o[6]));
+    sg13g2_IOPadOut16mA pad_pulse7_o     (.pad(pulse7_o),     .c2p(soc_pulse_o[7]));
+
+    sg13g2_IOPadOut16mA pad_adv_timer0_ch0     (.pad(adv_timer0_ch0),     .c2p(soc_ch0_o[0]));
+    sg13g2_IOPadOut16mA pad_adv_timer0_ch1     (.pad(adv_timer0_ch1),     .c2p(soc_ch1_o[0]));
+    sg13g2_IOPadOut16mA pad_adv_timer0_ch2     (.pad(adv_timer0_ch2),     .c2p(soc_ch2_o[0]));
+    sg13g2_IOPadOut16mA pad_adv_timer0_ch3     (.pad(adv_timer0_ch3),     .c2p(soc_ch3_o[0]));
 
     sg13g2_IOPadInOut30mA pad_gpio0_io     (.pad(gpio0_io),     .c2p(soc_gpio_o[0]),  .p2c(soc_gpio_i[0]),   .c2p_en(soc_gpio_out_en_o[0]));
     sg13g2_IOPadInOut30mA pad_gpio1_io     (.pad(gpio1_io),     .c2p(soc_gpio_o[1]),  .p2c(soc_gpio_i[1]),   .c2p_en(soc_gpio_out_en_o[1]));
@@ -116,18 +142,7 @@ module croc_chip import croc_pkg::*; #() (
     sg13g2_IOPadInOut30mA pad_gpio17_io    (.pad(gpio17_io),    .c2p(soc_gpio_o[17]), .p2c(soc_gpio_i[17]),  .c2p_en(soc_gpio_out_en_o[17]));
     sg13g2_IOPadInOut30mA pad_gpio18_io    (.pad(gpio18_io),    .c2p(soc_gpio_o[18]), .p2c(soc_gpio_i[18]),  .c2p_en(soc_gpio_out_en_o[18]));
     sg13g2_IOPadInOut30mA pad_gpio19_io    (.pad(gpio19_io),    .c2p(soc_gpio_o[19]), .p2c(soc_gpio_i[19]),  .c2p_en(soc_gpio_out_en_o[19]));
-    sg13g2_IOPadInOut30mA pad_gpio20_io    (.pad(gpio20_io),    .c2p(soc_gpio_o[20]), .p2c(soc_gpio_i[20]),  .c2p_en(soc_gpio_out_en_o[20]));
-    sg13g2_IOPadInOut30mA pad_gpio21_io    (.pad(gpio21_io),    .c2p(soc_gpio_o[21]), .p2c(soc_gpio_i[21]),  .c2p_en(soc_gpio_out_en_o[21]));
-    sg13g2_IOPadInOut30mA pad_gpio22_io    (.pad(gpio22_io),    .c2p(soc_gpio_o[22]), .p2c(soc_gpio_i[22]),  .c2p_en(soc_gpio_out_en_o[22]));
-    sg13g2_IOPadInOut30mA pad_gpio23_io    (.pad(gpio23_io),    .c2p(soc_gpio_o[23]), .p2c(soc_gpio_i[23]),  .c2p_en(soc_gpio_out_en_o[23]));
-    sg13g2_IOPadInOut30mA pad_gpio24_io    (.pad(gpio24_io),    .c2p(soc_gpio_o[24]), .p2c(soc_gpio_i[24]),  .c2p_en(soc_gpio_out_en_o[24]));
-    sg13g2_IOPadInOut30mA pad_gpio25_io    (.pad(gpio25_io),    .c2p(soc_gpio_o[25]), .p2c(soc_gpio_i[25]),  .c2p_en(soc_gpio_out_en_o[25]));
-    sg13g2_IOPadInOut30mA pad_gpio26_io    (.pad(gpio26_io),    .c2p(soc_gpio_o[26]), .p2c(soc_gpio_i[26]),  .c2p_en(soc_gpio_out_en_o[26]));
-    sg13g2_IOPadInOut30mA pad_gpio27_io    (.pad(gpio27_io),    .c2p(soc_gpio_o[27]), .p2c(soc_gpio_i[27]),  .c2p_en(soc_gpio_out_en_o[27]));
-    sg13g2_IOPadInOut30mA pad_gpio28_io    (.pad(gpio28_io),    .c2p(soc_gpio_o[28]), .p2c(soc_gpio_i[28]),  .c2p_en(soc_gpio_out_en_o[28]));
-    sg13g2_IOPadInOut30mA pad_gpio29_io    (.pad(gpio29_io),    .c2p(soc_gpio_o[29]), .p2c(soc_gpio_i[29]),  .c2p_en(soc_gpio_out_en_o[29]));
-    sg13g2_IOPadInOut30mA pad_gpio30_io    (.pad(gpio30_io),    .c2p(soc_gpio_o[30]), .p2c(soc_gpio_i[30]),  .c2p_en(soc_gpio_out_en_o[30]));
-    sg13g2_IOPadInOut30mA pad_gpio31_io    (.pad(gpio31_io),    .c2p(soc_gpio_o[31]), .p2c(soc_gpio_i[31]),  .c2p_en(soc_gpio_out_en_o[31]));
+
     sg13g2_IOPadOut16mA pad_unused0_o      (.pad(unused0_o),    .c2p(soc_status_o));
     sg13g2_IOPadOut16mA pad_unused1_o      (.pad(unused1_o),    .c2p(soc_status_o));
     sg13g2_IOPadOut16mA pad_unused2_o      (.pad(unused2_o),    .c2p(soc_status_o));
@@ -154,7 +169,9 @@ module croc_chip import croc_pkg::*; #() (
     (* dont_touch = "true" *)sg13g2_IOPadIOVss pad_vssio3();
 
   croc_soc #(
-    .GpioCount( GpioCount )
+    .GpioCount( GpioCount ),
+    .N_PULSER_INST( N_PULSER_INST ),
+    .AdvTimer ( AdvTimer )
   )
   i_croc_soc (
     .clk_i          ( soc_clk_i      ),
@@ -172,6 +189,13 @@ module croc_chip import croc_pkg::*; #() (
 
     .uart_rx_i      ( soc_uart_rx_i ),
     .uart_tx_o      ( soc_uart_tx_o ),
+
+    .pulse_o        ( soc_pulse_o ),
+
+    .ch_0_o         ( soc_ch0_o ),
+    .ch_1_o         ( soc_ch1_o ),
+    .ch_2_o         ( soc_ch2_o ),
+    .ch_3_o         ( soc_ch3_o ),
 
     .gpio_i         ( soc_gpio_i        ),             
     .gpio_o         ( soc_gpio_o        ),            

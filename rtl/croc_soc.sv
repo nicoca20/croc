@@ -6,7 +6,9 @@
 // - Philippe Sauter <phsauter@iis.ee.ethz.ch>
 
 module croc_soc import croc_pkg::*; #(
-  parameter int unsigned GpioCount = 16
+  parameter int unsigned GpioCount = 16,
+  parameter int unsigned N_PULSER_INST = 4,
+  parameter int unsigned AdvTimer = 4
 ) (
   input  logic clk_i,
   input  logic rst_ni,
@@ -23,6 +25,13 @@ module croc_soc import croc_pkg::*; #(
 
   input  logic uart_rx_i,
   output logic uart_tx_o,
+
+  output logic [N_PULSER_INST-1:0] pulse_o,
+
+  output logic [AdvTimer-1:0] ch_0_o,
+  output logic [AdvTimer-1:0] ch_1_o,
+  output logic [AdvTimer-1:0] ch_2_o,
+  output logic [AdvTimer-1:0] ch_3_o,
 
   input  logic [GpioCount-1:0] gpio_i,       // Input from GPIO pins
   output logic [GpioCount-1:0] gpio_o,       // Output to GPIO pins
@@ -61,7 +70,9 @@ logic [NumExternalIrqs-1:0] interrupts;
 logic [GpioCount-1:0] gpio_in_sync;
 
 croc_domain #(
-  .GpioCount( GpioCount ) 
+  .GpioCount( GpioCount ),
+  .N_PULSER_INST ( N_PULSER_INST ),
+  .AdvTimer ( AdvTimer ) 
 ) i_croc (
   .clk_i,
   .rst_ni ( synced_rst_n ),
@@ -77,6 +88,13 @@ croc_domain #(
 
   .uart_rx_i,
   .uart_tx_o,
+
+  .pulse_o,
+
+  .ch_0_o,
+  .ch_1_o,
+  .ch_2_o,
+  .ch_3_o,
 
   .gpio_i,             
   .gpio_o,            

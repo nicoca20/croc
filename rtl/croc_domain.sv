@@ -7,7 +7,9 @@
 // - Nico Canzani <ncanzani@student.ethz.ch>
 
 module croc_domain import croc_pkg::*; #(
-  parameter int unsigned GpioCount = 16
+  parameter int unsigned GpioCount = 16,
+  parameter int unsigned N_PULSER_INST = 4,
+  parameter int unsigned AdvTimer = 4
 ) (
   input  logic      clk_i,
   input  logic      rst_ni,
@@ -23,6 +25,13 @@ module croc_domain import croc_pkg::*; #(
 
   input  logic      uart_rx_i,
   output logic      uart_tx_o,
+
+  output logic [N_PULSER_INST-1:0]    pulse_o,
+
+  output logic [AdvTimer-1:0] ch_0_o,
+  output logic [AdvTimer-1:0] ch_1_o,
+  output logic [AdvTimer-1:0] ch_2_o,
+  output logic [AdvTimer-1:0] ch_3_o,
 
   input  logic [GpioCount-1:0] gpio_i,        // Input from GPIO pins
   output logic [GpioCount-1:0] gpio_o,        // Output to GPIO pins
@@ -621,7 +630,7 @@ module croc_domain import croc_pkg::*; #(
     .rst_ni       ( rst_ni              ),
     .obi_req_i    ( pulser_obi_req ),
     .obi_rsp_o    ( pulser_obi_rsp ),
-    .pulse_o      (  )
+    .pulse_o      ( pulse_o )
   );
 
   // adv_timer Subordinate
@@ -673,12 +682,12 @@ module croc_domain import croc_pkg::*; #(
 
     .dft_cg_enable_i  ( 1'b0              ),
     .low_speed_clk_i  ( ref_clk_i         ),
-    .ext_sig_i        (                   ),
+    .ext_sig_i        ( gpio_i ),
     .events_o         (                   ),
-    .ch_0_o           (                   ),
-    .ch_1_o           (                   ),
-    .ch_2_o           (                   ),
-    .ch_3_o           (                   )
+    .ch_0_o           ( ch_0_o ),
+    .ch_1_o           ( ch_1_o ),
+    .ch_2_o           ( ch_2_o ),
+    .ch_3_o           ( ch_3_o )
   );
 
 endmodule
