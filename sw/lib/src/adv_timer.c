@@ -18,8 +18,34 @@ void timer0_init(int topvalue)
     // From where to where should be counted (both values are included).
     timer0_set_bottom_top_value(0, topvalue);
 
-    // Start timer 0
-    *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD) |= TIM_CMD_START;
+    // Set r_timer0_ch0_mode to OP_SETRST and set the threshold
+    *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CH0_TH) = (0b001 << 16) | topvalue-1;
+}
+
+void adv_timer_enable_event(int timer_id, int sel_channel)
+{
+    // Check if timer_id is valid (0-3)
+    if (timer_id < 0 || timer_id > 3) {
+        return; // Invalid timer ID
+    }
+    if (sel_channel < 0 || sel_channel > 3) {
+        return; // Invalid channel selection
+    }
+
+    // Select the channel for event generation
+    *reg32(ADV_TIMER_BASE_ADDR, REG_EVENT_CFG) |= ((sel_channel) << 4 * timer_id);
+    // Enable event generation for the specified timer
+    *reg32(ADV_TIMER_BASE_ADDR, REG_EVENT_CFG) |= ((1 << timer_id) << 16);
+}
+void adv_timer_start(int timer_id)
+{
+    // Check if timer_id is valid (0-3)
+    if (timer_id < 0 || timer_id > 3) {
+        return; // Invalid timer ID
+    }
+
+    // Start the specified timer
+    *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CMD + (timer_id * 0x40)) |= TIM_CMD_START;
 }
 
 void timer0_pwm_init(int nCycles, int dutyCycle)

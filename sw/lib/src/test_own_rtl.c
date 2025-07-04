@@ -198,8 +198,39 @@ void test_adv_timer(void) {
     topvalue_read = timer0_get_top_value();
     printf("Timer Top Value after init: 0x%x (expexted 0x%x)\n", topvalue_read, topvalue);
 
+    adv_timer_start(0);
     printf("Timer started\n");
     uart_write_flush();
+
+    // Wait for the timer to reach some threshold
+    int wait_until_counter = 0x200;
+    while (timer0_get_counter() < wait_until_counter && wait_until_counter < topvalue)
+        ;
+
+    printf("Timer reached threshold of 0x%x!\n", wait_until_counter);
+    uart_write_flush();
+
+#endif
+}
+
+void test_adv_timer_interrupt(void) {
+    // Read Signature from ROM
+#if TEST_RUN_ADV_TIMER_INTERRUPT
+    int topvalue = 0x10;
+    int topvalue_read = timer0_get_top_value(); // Causes first APB communication
+    printf("Timer Top Value before init: 0x%x\n", topvalue_read);
+    timer0_init(topvalue);
+    topvalue_read = timer0_get_top_value();
+    printf("Timer Top Value after init: 0x%x (expexted 0x%x)\n", topvalue_read, topvalue);
+    // Enable event generation for timer 0
+    // printf("Enabling event generation for timer 0\n");
+    // uart_write_flush();
+    adv_timer_enable_event(0, 0); // Enable event generation for channel 0 of timer 0
+
+    adv_timer_start(0);
+
+    // printf("Timer started\n");
+    // uart_write_flush();
 
     // Wait for the timer to reach some threshold
     int wait_until_counter = 0x200;

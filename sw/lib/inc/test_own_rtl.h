@@ -14,6 +14,7 @@ extern "C"
     void test_pulser_run_all(void);
     void test_pulser_one_by_one(void);
     void test_adv_timer(void);
+    void test_adv_timer_interrupt(void);
 
 #ifdef __cplusplus
 } // extern "C"

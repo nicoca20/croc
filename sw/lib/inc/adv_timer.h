@@ -100,6 +100,9 @@
 #define REG_TIM3_EN (1 << 3)
 
 void timer0_init(int topvalue);
+void adv_timer_start(int timer_id);
+
+void adv_timer_enable_event(int timer_id, int sel_channel);
 
 void timer0_pwm_init(int nCycles, int dutycycle_value);
 
