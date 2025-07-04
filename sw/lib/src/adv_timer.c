@@ -18,8 +18,8 @@ void timer0_init(int topvalue)
     // From where to where should be counted (both values are included).
     timer0_set_bottom_top_value(0, topvalue);
 
-    // Set r_timer0_ch0_mode to OP_SETRST and set the threshold
-    *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CH0_TH) = (0b001 << 16) | topvalue-1;
+    // Set r_timer0_ch0_mode to OP_RSTSET and set the threshold to 0
+    *reg32(ADV_TIMER_BASE_ADDR, REG_TIM0_CH0_TH) = (0b110 << 16) | 0;
 }
 
 void adv_timer_enable_event(int timer_id, int sel_channel)
