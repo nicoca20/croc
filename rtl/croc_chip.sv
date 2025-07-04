@@ -78,7 +78,7 @@ module croc_chip import croc_pkg::*; #() (
 
     localparam int unsigned GpioCount = 20;
     localparam int unsigned N_PULSER_INST = 8;
-    localparam int unsigned AdvTimer = 1
+    localparam int unsigned AdvTimer = 1;
 
     logic [GpioCount-1:0] soc_gpio_i;             
     logic [GpioCount-1:0] soc_gpio_o;            
