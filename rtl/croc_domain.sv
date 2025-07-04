@@ -62,17 +62,24 @@ module croc_domain import croc_pkg::*; #(
   logic [31:0] boot_addr;
 
   // interrupts (irqs)
+
+  logic [3:0] adv_timer0_irqs;
+
   logic uart_irq;
   logic gpio_irq;
   logic timer0_irq0;
   logic timer0_irq1;
+  logic adv_timer0_irq0;
+
   logic [15:0] interrupts;
+
   always_comb begin
     interrupts    = '0;
     interrupts[0] = timer0_irq1;
     interrupts[1] = uart_irq;
     interrupts[2] = gpio_irq;
     interrupts[3+:NumExternalIrqs] = interrupts_i;
+    interrupts[3+NumExternalIrqs] = adv_timer0_irq0;
   end
 
   // ----------------------------
@@ -619,18 +626,18 @@ module croc_domain import croc_pkg::*; #(
 
   // Pulser Subordinate
     pulser #(
-    .ObiCfg                 ( SbrObiCfg     ),
-    .obi_req_t              ( sbr_obi_req_t ),
-    .obi_rsp_t              ( sbr_obi_rsp_t ),
-    .reg_req_t              ( reg_req_t     ),
-    .reg_rsp_t              ( reg_rsp_t     ),
-    .N_PULSER_INST          ( 4             )
+    .ObiCfg           ( SbrObiCfg         ),
+    .obi_req_t        ( sbr_obi_req_t     ),
+    .obi_rsp_t        ( sbr_obi_rsp_t     ),
+    .reg_req_t        ( reg_req_t         ),
+    .reg_rsp_t        ( reg_rsp_t         ),
+    .N_PULSER_INST    ( 4                 )
     ) i_pulser (
-    .clk_i        ( clk_i               ),
-    .rst_ni       ( rst_ni              ),
-    .obi_req_i    ( pulser_obi_req ),
-    .obi_rsp_o    ( pulser_obi_rsp ),
-    .pulse_o      ( pulse_o )
+    .clk_i            ( clk_i             ),
+    .rst_ni           ( rst_ni            ),
+    .obi_req_i        ( pulser_obi_req    ),
+    .obi_rsp_o        ( pulser_obi_rsp    ),
+    .pulse_o          ( pulse_o           )
   );
 
   // adv_timer Subordinate
@@ -682,12 +689,14 @@ module croc_domain import croc_pkg::*; #(
 
     .dft_cg_enable_i  ( 1'b0              ),
     .low_speed_clk_i  ( ref_clk_i         ),
-    .ext_sig_i        ( gpio_i ),
-    .events_o         (                   ),
-    .ch_0_o           ( ch_0_o ),
-    .ch_1_o           ( ch_1_o ),
-    .ch_2_o           ( ch_2_o ),
-    .ch_3_o           ( ch_3_o )
+    .ext_sig_i        ( gpio_i            ),
+    .events_o         ( adv_timer0_irqs   ),
+    .ch_0_o           ( ch_0_o            ),
+    .ch_1_o           ( ch_1_o            ),
+    .ch_2_o           ( ch_2_o            ),
+    .ch_3_o           ( ch_3_o            )
   );
+
+  assign adv_timer0_irq0 = adv_timer0_irqs[0];
 
 endmodule
