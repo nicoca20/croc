@@ -47,5 +47,9 @@ int main()
     test_adv_timer();
 #endif
 
+#if TEST_RUN_ADV_TIMER_INTERRUPT
+    test_adv_timer_interrupt();
+#endif
+
     return 1;
 }
