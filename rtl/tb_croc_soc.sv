@@ -423,6 +423,13 @@ module tb_croc_soc #(
         .uart_rx_i     ( uart_rx_i ),
         .uart_tx_o     ( uart_tx_o ),
 
+        .pulse_o       (               ),
+
+        .ch_0_o        (               ),
+        .ch_1_o        (               ),
+        .ch_2_o        (               ),
+        .ch_3_o        (               ),
+
         .gpio_i        ( gpio_i        ),             
         .gpio_o        ( gpio_o        ),            
         .gpio_out_en_o ( gpio_out_en_o )
