@@ -631,7 +631,7 @@ module croc_domain import croc_pkg::*; #(
     .obi_rsp_t        ( sbr_obi_rsp_t     ),
     .reg_req_t        ( reg_req_t         ),
     .reg_rsp_t        ( reg_rsp_t         ),
-    .N_PULSER_INST    ( 4                 )
+    .N_PULSER_INST    ( N_PULSER_INST     )
     ) i_pulser (
     .clk_i            ( clk_i             ),
     .rst_ni           ( rst_ni            ),
