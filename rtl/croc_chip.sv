@@ -59,7 +59,7 @@ module croc_chip import croc_pkg::*; #() (
   inout  wire gpio20_io,
   inout  wire gpio21_io,
   inout  wire gpio22_io,
-  inout  wire gpio23_io,
+  inout  wire gpio23_io
 ); 
     logic soc_clk_i;
     logic soc_rst_ni;
