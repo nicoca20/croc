@@ -135,6 +135,10 @@ static inline void set_testconf(void) {
     pulser_config(PULSER_1, &pulser1_settings);
     pulser_config(PULSER_2, &pulser2_settings);
     pulser_config(PULSER_3, &pulser3_settings);
+    pulser_config(PULSER_4, &pulser0_settings);
+    pulser_config(PULSER_5, &pulser1_settings);
+    pulser_config(PULSER_6, &pulser2_settings);
+    pulser_config(PULSER_7, &pulser3_settings);
 }
 #endif
 
@@ -149,7 +153,8 @@ void test_pulser_one_by_one(void) {
     }
 
     // Enable Pulsers
-    pulser_en((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+    // pulser_en((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+    pulser_en(0xFF);
 
     for (int id = 0; id < N_PULSERS; id++) {
         pulser_start(1 << id);
@@ -171,8 +176,10 @@ void test_pulser_run_all(void) {
     set_testconf();
 
     // Enable Pulsers
-    pulser_en((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
-    pulser_stop((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+    // pulser_en((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+    // pulser_stop((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+    pulser_en(0xFF);
+    pulser_stop(0xFF);
 
     // pulser_start((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
     // pulser_stop((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
@@ -180,7 +187,7 @@ void test_pulser_run_all(void) {
     // {
     //     __asm__ volatile("nop");
     // }
-    pulser_start((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+    pulser_start(0xFF);
 
 
     // pulser_disable_all_after_done();

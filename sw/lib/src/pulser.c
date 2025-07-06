@@ -159,19 +159,19 @@ int pulser_read_count(pulser_id_t id)
     return pulser_read(id, PULSER_CORE_CFG_CNT_REG_OFFSET);
 }
 
-int pulser_read_status(pulser_id_t id)
-{
-    int reg = pulser_read(id, PULSER_CORE_STATUS_REG_OFFSET);
-    int ready_bit = (reg & (1 << PULSER_CORE_STATUS_READY_BIT)) >> PULSER_CORE_STATUS_READY_BIT;
-    int state = (reg >> PULSER_CORE_STATUS_STATE_OFFSET) & PULSER_CORE_STATUS_STATE_MASK;
-    return (ready_bit | (state << 1));
-}
+// int pulser_read_status(pulser_id_t id)
+// {
+//     int reg = pulser_read(id, PULSER_CORE_STATUS_REG_OFFSET);
+//     int ready_bit = (reg & (1 << PULSER_CORE_STATUS_READY_BIT)) >> PULSER_CORE_STATUS_READY_BIT;
+//     int state = (reg >> PULSER_CORE_STATUS_STATE_OFFSET) & PULSER_CORE_STATUS_STATE_MASK;
+//     return (ready_bit | (state << 1));
+// }
 
-int pulser_ready(pulser_id_t id)
-{
-    int reg = pulser_read(id, PULSER_CORE_STATUS_REG_OFFSET);
-    return (reg & (1 << PULSER_CORE_STATUS_READY_BIT)) >> PULSER_CORE_STATUS_READY_BIT;
-}
+// int pulser_ready(pulser_id_t id)
+// {
+//     int reg = pulser_read(id, PULSER_CORE_STATUS_REG_OFFSET);
+//     return (reg & (1 << PULSER_CORE_STATUS_READY_BIT)) >> PULSER_CORE_STATUS_READY_BIT;
+// }
 
 state_pulser_t get_pulser_fsm_state(pulser_id_t id)
 {
