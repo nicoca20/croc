@@ -120,13 +120,13 @@ void pulser_stop(int pulser_to_stop)
     *ctrl_reg = ((uint32_t)(pulser_to_stop & PULSER_GENERAL_CTRL_STOP_MASK)) << PULSER_GENERAL_CTRL_STOP_OFFSET;
 }
 
-void pulser_disable_all_after_done(void)
-{
-    for (int i_pulser = 0; i_pulser < N_PULSERS; ++i_pulser) {
-        while (!pulser_ready(i_pulser)) ;
-        pulser_dis(1 << i_pulser);
-    }
-}
+// void pulser_disable_all_after_done(void)
+// {
+//     for (int i_pulser = 0; i_pulser < N_PULSERS; ++i_pulser) {
+//         while (!pulser_ready(i_pulser)) ;
+//         pulser_dis(1 << i_pulser);
+//     }
+// }
 
 // Reading functions
 

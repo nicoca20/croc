@@ -5,24 +5,24 @@
 // Author:
 // - Nico Canzani <ncanzani@student.ethz.ch>
 
+#include "config.h"
 #include "test_own_rtl.h"
 #include "util.h"
 #include "uart.h"
 #include "print.h"
-#include "config.h"
-#include "adv_timer.h"
 
+#if TEST_READ_ROM
 void test_read_rom(void) {
     // Read Signature from ROM
-#if TEST_READ_ROM
     for (int i = 0; i < 3; i++)
     {
         printf("Rom data: %x\n", *reg32(USER_ROM_BASE_ADDR, i * 4));
         uart_write_flush();
     }
-#endif
 }
+#endif
 
+#if TEST_REG_PART_F1 || TEST_REG_PART_F2 || TEST_REG_PART_CNT
 void test_pulser_regs(pulser_id_t id)
 {
     int n_errors = 0;
@@ -80,14 +80,13 @@ void test_pulser_regs(pulser_id_t id)
     n_tests++;
 #endif
 
-#if TEST_REG_PART_F1 || TEST_REG_PART_F2 || TEST_REG_PART_CNT
     printf("N Tests: %x, N Errors: %x\n", n_tests, n_errors);
     uart_write_flush();
-#endif
 }
+#endif
 
-static inline void set_testconf(void) {
 #if TEST_RUN_PULSER_ONE_BY_ONE || TEST_RUN_ALL_PULSERS
+static inline void set_testconf(void) {
     pulser_settings_t pulser0_settings;
     pulser0_settings.f1_end = 7;
     pulser0_settings.f1_switch = 3;
@@ -136,11 +135,11 @@ static inline void set_testconf(void) {
     pulser_config(PULSER_1, &pulser1_settings);
     pulser_config(PULSER_2, &pulser2_settings);
     pulser_config(PULSER_3, &pulser3_settings);
-#endif
 }
+#endif
 
-void test_pulser_one_by_one(void) {
 #if TEST_RUN_PULSER_ONE_BY_ONE
+void test_pulser_one_by_one(void) {
 
     set_testconf();
 
@@ -160,14 +159,14 @@ void test_pulser_one_by_one(void) {
             __asm__ volatile("nop");
         }
         pulser_start(1 << id);
-
     }
-    pulser_disable_all_after_done();
-#endif
+    
+    // pulser_disable_all_after_done();
 }
+#endif
 
-void test_pulser_run_all(void) {
 #if TEST_RUN_ALL_PULSERS
+void test_pulser_run_all(void) {
 
     set_testconf();
 
@@ -175,23 +174,23 @@ void test_pulser_run_all(void) {
     pulser_en((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
     pulser_stop((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
 
-    pulser_start((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
-    pulser_stop((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
-    for (int i = 0; i < 5; i++)
-    {
-        __asm__ volatile("nop");
-    }
+    // pulser_start((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+    // pulser_stop((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
+    // for (int i = 0; i < 5; i++)
+    // {
+    //     __asm__ volatile("nop");
+    // }
     pulser_start((1 << PULSER_0) | (1 << PULSER_1) | (1 << PULSER_2) | (1 << PULSER_3));
 
 
-    pulser_disable_all_after_done();
-#endif
+    // pulser_disable_all_after_done();
 }
+#endif
 
+#if TEST_RUN_ADV_TIMER
 void test_adv_timer(void) {
     // Read Signature from ROM
-#if TEST_RUN_ADV_TIMER
-    int topvalue = 0x10;
+    int topvalue = 0x300;
     int topvalue_read = timer0_get_top_value(); // Causes first APB communication
     printf("Timer Top Value before init: 0x%x\n", topvalue_read);
     timer0_init(topvalue);
@@ -210,12 +209,12 @@ void test_adv_timer(void) {
     printf("Timer reached threshold of 0x%x!\n", wait_until_counter);
     uart_write_flush();
 
-#endif
 }
+#endif
 
+#if TEST_RUN_ADV_TIMER_INTERRUPT
 void test_adv_timer_interrupt(void) {
     // Read Signature from ROM
-#if TEST_RUN_ADV_TIMER_INTERRUPT
     int topvalue = 0x10;
     int topvalue_read = timer0_get_top_value(); // Causes first APB communication
     printf("Timer Top Value before init: 0x%x\n", topvalue_read);
@@ -240,5 +239,5 @@ void test_adv_timer_interrupt(void) {
     printf("Timer reached threshold of 0x%x!\n", wait_until_counter);
     uart_write_flush();
 
-#endif
 }
+#endif
