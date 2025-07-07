@@ -28,12 +28,21 @@ void test_nop (void) {
 
 #if TEST_READ_ROM
 void test_read_rom(void) {
-    // Read Signature from ROM
-    for (int i = 0; i < 3; i++)
-    {
-        printf("Rom data: %x\n", *reg32(USER_ROM_BASE_ADDR, i * 4));
-        uart_write_flush();
+    volatile uint32_t* rom = (volatile uint32_t*)USER_ROM_BASE_ADDR;
+
+    for (int word_i = 0; word_i < 4; word_i++) {
+        uint32_t word = rom[word_i];
+
+        // Extract bytes from word, little-endian (LSB first):
+        for (int byte_i = 0; byte_i < 4; byte_i++) {
+            uint8_t c = (word >> (8 * byte_i)) & 0xFF;
+            if (c == 0) break;
+            putchar(c);
+        }
     }
+    printf("\n");
+
+    uart_write_flush();
 }
 #endif
 
