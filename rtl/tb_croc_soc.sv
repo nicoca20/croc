@@ -404,7 +404,9 @@ module tb_croc_soc #(
         \croc_soc$croc_chip.i_croc_soc i_croc_soc (
     `else
         croc_soc #(
-            .GpioCount ( GpioCount  )
+            .GpioCount      ( GpioCount  ),
+            .N_PULSER_INST  ( 8          ),
+            .AdvTimer       ( 4          )
         ) i_croc_soc (
     `endif
         .clk_i         ( clk        ),

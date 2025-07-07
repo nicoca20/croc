@@ -10,7 +10,7 @@ extern "C"
 #endif
 
 #define PULSER_OFFSET_PER_ID 0x20
-#define N_PULSERS 4
+#define N_PULSERS 8
 
     //------------------------------------------------------------------------------
     // Bitfield helper type and inline functions (declarations only, no implementation)
@@ -56,7 +56,11 @@ extern "C"
         PULSER_0 = 0,
         PULSER_1 = 1,
         PULSER_2 = 2,
-        PULSER_3 = 3
+        PULSER_3 = 3,
+        PULSER_4 = 4,
+        PULSER_5 = 5,
+        PULSER_6 = 6,
+        PULSER_7 = 7
     } pulser_id_t;
 
     //------------------------------------------------------------------------------
