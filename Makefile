@@ -78,7 +78,7 @@ vsim/compile_netlist.tcl: Bender.lock Bender.yml
 vsim: vsim/compile_rtl.tcl $(SW_HEX)
 	rm -rf vsim/work
 	cd vsim; $(VSIM) -c -do "source compile_rtl.tcl; exit"
-	cd vsim; $(VSIM) +binary="$(realpath $(SW_HEX))" -gui tb_croc_soc $(VSIM_ARGS)
+	cd vsim; $(VSIM) +binary="$(realpath $(SW_HEX))" -gui tb_croc_soc $(VSIM_ARGS) -do "run -all; exit"
 
 ## Simulate netlist using Questasim/Modelsim/vsim
 vsim-yosys: vsim/compile_netlist.tcl $(SW_HEX) yosys/out/croc_chip_yosys_debug.v
