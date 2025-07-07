@@ -3,6 +3,10 @@
 
 #include "util.h"
 
+#if TEST_NOP
+    void test_nop (void);
+#endif
+
 #if TEST_REG_PART_F1 || TEST_REG_PART_F2 || TEST_REG_PART_CNT || TEST_RUN_ALL_PULSERS || TEST_RUN_PULSER_ONE_BY_ONE
     #include "pulser.h"
     #ifdef __cplusplus

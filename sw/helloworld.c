@@ -22,6 +22,10 @@ int main()
     // printf("Hello World!\n");
     // uart_write_flush();
 
+#if TEST_NOP
+    test_nop();
+#endif
+
 #if TEST_REG_PART_F1 || TEST_REG_PART_F2 || TEST_REG_PART_CNT
     for (int id = 0; id < N_PULSERS; id++) {
         printf("Pulser %x\n", id);

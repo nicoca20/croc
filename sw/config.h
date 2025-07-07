@@ -29,11 +29,12 @@
 
 // Since SRAM is very limmited, select which part to compile and test.
 // Difficult to impossible to activate more than one test
-#define TEST_READ_ROM               0
-#define TEST_REG_PART_F1            0
-#define TEST_REG_PART_F2            0
-#define TEST_REG_PART_CNT           0
-#define TEST_RUN_ALL_PULSERS        0
-#define TEST_RUN_PULSER_ONE_BY_ONE  0
-#define TEST_RUN_ADV_TIMER          0
-#define TEST_RUN_ADV_TIMER_INTERRUPT 1
+#define TEST_NOP                        1
+#define TEST_READ_ROM                   0
+#define TEST_REG_PART_F1                0
+#define TEST_REG_PART_F2                0
+#define TEST_REG_PART_CNT               0
+#define TEST_RUN_ALL_PULSERS            0
+#define TEST_RUN_PULSER_ONE_BY_ONE      0
+#define TEST_RUN_ADV_TIMER              0
+#define TEST_RUN_ADV_TIMER_INTERRUPT    0

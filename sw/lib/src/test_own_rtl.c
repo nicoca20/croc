@@ -11,6 +11,21 @@
 #include "uart.h"
 #include "print.h"
 
+
+#if TEST_NOP
+void test_nop (void) {
+    // This is a test that does nothing, just to check if the test framework works
+
+    // Use read to find start and stop of nop test
+    *reg32(USER_ROM_BASE_ADDR, 0);
+    for (int i = 0; i < 1000; i++)
+    {
+        __asm__ volatile("nop");
+    }
+    *reg32(USER_ROM_BASE_ADDR, 0);
+}
+#endif
+
 #if TEST_READ_ROM
 void test_read_rom(void) {
     // Read Signature from ROM
