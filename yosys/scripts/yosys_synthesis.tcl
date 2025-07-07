@@ -53,6 +53,7 @@ yosys setattr -set keep_hierarchy 1 "t:pulser_core_reg_top$*"
 yosys setattr -set keep_hierarchy 1 "t:pulser_general_reg_top$*"
 yosys setattr -set keep_hierarchy 1 "t:periph_to_reg$*"
 yosys setattr -set keep_hierarchy 1 "t:reg_adv_timer_wrap$*"
+yosys setattr -set keep_hierarchy 1 "t:user_rom$*"
 
 
 # blackbox modules (applies the *blackbox* attribute)
@@ -140,7 +141,7 @@ yosys dfflibmap {*}$tech_cells_args
 
 # then perform bit-level optimization and mapping on all combinational clouds in ABC
 # target period (per optimized block/module) in picoseconds
-set period_ps 8000
+set period_ps 10000
 # pre-process abc file (written to tmp directory)
 set abc_comb_script   [processAbcScript scripts/abc-opt.script]
 # call ABC
