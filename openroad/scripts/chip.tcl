@@ -199,8 +199,8 @@ utl::report "Clock Tree Synthesis"
 set_wire_rc -clock -layer Metal4
 clock_tree_synthesis -buf_list $ctsBuf -root_buf $ctsBufRoot \
                      -sink_clustering_enable \
-                     -obstruction_aware \
-                     -balance_levels
+                     -obstruction_aware 
+                    # -balance_levels
 
 # Repair wire length between clock pad and clock-tree root
 utl::report "Repair clock nets"
