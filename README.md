@@ -44,7 +44,7 @@ The address map of the CROC is:
 
 The figure below shows the area distribution of the modified design, including the Pulser and Advanced Timer modules in kilo Gate Equivalents (kGE).
 
-![Area Distribution](doc/croc_area_distribution.svg)  
+![Area Distribution](doc/croc_area_distribution.png)
 *Figure: Synthesis results showing the relative area contribution of each module.*
 
 ## License
