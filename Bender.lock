@@ -7,20 +7,13 @@ packages:
     dependencies:
     - common_cells
   apb_adv_timer:
-    revision: null
-    version: null
+    revision: 76b204a25ef14e4284ee9fb44485f6762629dc60
+    version: 1.1.1
     source:
       Git: https://github.com/nicoca20/apb_adv_timer.git
     dependencies:
-    - tech_cells_generic
-  apb_uart:
-    revision: null
-    version: null
-    source:
-      Path: rtl/apb_uart
-    dependencies:
     - apb
-    - register_interface
+    - tech_cells_generic
   common_cells:
     revision: null
     version: null
@@ -58,12 +51,15 @@ packages:
     - common_cells
     - obi
   pulser:
-    revision: null
+    revision: bdfd7f5fb2d695f4f2bfd8c30ada56645bed8500
     version: null
     source:
-      Git: https://github.com/nicoca20/pulser.git
+      Git: https://github.com/pulp-platform/pulser.git
     dependencies:
     - common_cells
+    - obi
+    - register_interface
+    - tech_cells_generic
   register_interface:
     revision: null
     version: null
