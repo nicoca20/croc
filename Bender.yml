@@ -20,7 +20,7 @@ dependencies:
   obi:                  { git: "https://github.com/pulp-platform/obi.git",                  version: 0.1.7  }
   obi_peripherals:      { git: "https://github.com/pulp-platform/obi_peripherals.git",      rev: 21ee04d    } # UART
   apb_adv_timer:        { git: "https://github.com/nicoca20/apb_adv_timer.git",             version: 1.1.1  }
-  pulser:               { git: "https://github.com/nicoca20/pulser.git",                    rev: develop }
+  pulser:               { git: "https://github.com/pulp-platform/pulser.git",               rev: bdfd7f5    }
   cve2:                 { path: "rtl/cve2" } # a vendor package (no Bender.yml), see below 
 
 
@@ -188,7 +188,7 @@ vendor_package:
 
   - name: pulser
     target_dir: rtl/pulser
-    upstream: { git: "https://github.com/nicoca20/pulser.git", rev: "1f3aa6e45cff70444149cdb70b63919b664325e2"  } # working state, change to a tag at some point
+    upstream: { git: "https://github.com/pulp-platform/pulser.git", rev: "bdfd7f5fb2d695f4f2bfd8c30ada56645bed8500"  }
     patch_dir: "rtl/patches/pulser"
     mapping:
       - { from: 'rtl/',        to: '',            patch_dir: 'rtl/' }
